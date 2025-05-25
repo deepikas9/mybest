@@ -1,0 +1,50 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+    <link rel="icon" type="image/png" href="{% static 'images/me-snip.jpg' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+</head>
+<body>
+    <img src="{% static 'images/logo1.png'  %}" height=120px, alt="UME Logo" style="margin-top: 20px;">
+    <h2>Login Here</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.username }}
+        <br>
+        {{ form.password }}
+        <br>
+        <input type="hidden" name="next" value="{{ next }}">
+        <button type="submit" class="btn">Login</button>
+    
+
+    <!--{% if message %}
+        <p class="error-message">{{ message }}</p>
+    {% endif %} -->
+
+    {% if messages %} 
+      <ul class="messages">
+         {% for message in messages %}
+      <li class="{{ message.tags }}">{{ message }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
+    </form>
+    
+    
+    <p class="link-margin"><a href="{% url 'forgot_password' %}">Forgotten Password?</a></p>
+
+    <p>Don't have an account? &nbsp;&nbsp;<a href="{% url 'register' %}">Create Account</a></p>
+
+    <footer class="footer-fixed">
+        <p>&copy; 2025 UME Limited. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>

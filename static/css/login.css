@@ -1,0 +1,137 @@
+*
+{
+    margin: 0px;
+    padding: 0px;
+}
+body {
+    text-align: center;
+    font-family: Arial;
+    color: orangered;
+    background-color: black;
+    padding-bottom: 30px;
+}
+h2{
+    color:orangered;
+    margin-top: 15px;
+    margin-bottom: 50px;
+}
+.input {
+    width: 250px;
+    padding: 5px;
+    margin: 10px;
+    border: 2px solid black;
+    font-weight: bold;
+    border-radius: 20px;
+    text-align: center;
+}
+.input:hover {
+    width: 250px;
+    padding: 5px;
+    margin: 10px;
+    border: 2px solid whitesmoke;
+    font-weight: bold;
+    border-radius: 20px;
+    text-align: center;
+}
+.input:focus {
+    width: 250px;
+    padding: 5px;
+    margin: 10px;
+    border: 2px solid orangered;
+    font-weight: bold;
+    border-radius: 20px;
+    text-align: center;
+}
+
+.btn {
+    margin-top: 20px;
+    background-color: orangered;
+    color: whitesmoke;
+    padding: 4px 10px;
+    border: none;
+    width:150px;
+    cursor: pointer;
+    border-radius: 15px;
+}
+.btn:hover {
+    margin-top: 20px;
+    background-color: green;
+    color: whitesmoke;
+    padding: 4px 10px;
+    border: none;
+    width:150px;
+    cursor: pointer;
+    border-radius: 15px;
+}
+
+a { 
+    
+    color: whitesmoke;
+    text-decoration: none; 
+}
+a:hover{
+    color:green;
+    text-decoration: none;
+}
+.link-margin {
+margin-top: 50px;
+}
+.footer-fixed  {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: orangered;
+    color: whitesmoke;
+    text-align: center;
+    font-size: 10px;
+
+    padding: 10px !important;
+    height: 12.5px !important;
+    
+}
+.footer-fixed p {
+    margin: 0;
+}
+.error-message {
+    color: red;
+    margin-top: 30px;
+    text-align: center;
+    font-weight: bold;
+}
+
+
+p{
+    font-weight: bold;
+    margin-top: 20px;
+} 
+
+.messages {
+  list-style: none;
+  
+  margin: 10px 0;
+  margin-top: 25px;
+}
+
+.messages li {
+  color: red; /* light red */
+  /* background-color: #330000; /* dark red/black mix for black bg */
+  font-weight: bold;
+  margin-top: 25px;
+  font-size: 23px;
+}
+@media (max-width: 600px) {
+    .button {
+        width: 90%;
+        font-size: 0.9rem;
+    }
+
+    input, select {
+        width: 90%;
+    }
+
+    .footer-fixed {
+        font-size: 0.65rem;
+        padding: 8px;
+    }
+}
+
