@@ -1,3 +1,4 @@
+/*
 body {
     text-align: center;
     font-family: Arial;
@@ -15,11 +16,11 @@ input, select {
     border-radius: 20px;
     text-align: center;
 }
-input:hover, select :hover{
+input:hover, select:hover{
     display: block;
     margin: 10px auto;
     padding: 5px;
-     margin-top: 20px;
+    margin-top: 20px;
     border: 2px solid black;
     font-weight: bold;
     width: 250px;
@@ -49,11 +50,7 @@ input:hover, select :hover{
     font-weight: bold;
     border-radius: 15px;
 }
-.link {
-    margin-top: 40px;
-    font-size: 14px;
-    color: orangered;
-}
+
 a{
     color:whitesmoke;
     text-decoration: none;
@@ -73,8 +70,8 @@ a:hover{
     font-size: 10px;
   
     
-    padding: 10px !important;
-    height: 12.5px !important;
+    padding: 10px;
+    height: 12.5px;
 
 }
 .footer-fixed p {
@@ -107,23 +104,100 @@ a:hover{
         padding: 8px;
     }
 }
-
-/*
+*/
+body {
+    text-align: center;
+    font-family: Arial;
+    color: orangered;
+    background-color: black;
 }
+
 input, select {
-    width: 80%;
-    max-width: 300px;
-    box-sizing: border-box;
+    display: block;
+    margin: 20px auto 10px auto;
+    padding: 5px;
+    border: 2px solid whitesmoke;
+    font-weight: bold;
+    width: 250px;
+    border-radius: 20px;
+    text-align: center;
+}
+
+input:hover, select:hover {
+    border: 2px solid black;
 }
 
 .button {
-    padding: 10px 25px;
-    border-radius: 20px;
-    font-size: 1rem;
+    margin-top: 20px;
+    background-color: orangered;
+    color: whitesmoke;
+    padding: 5px 20px;
+    border: none;
+    width: 150px;
+    cursor: pointer;
+    font-weight: bold;
+    border-radius: 15px;
+}
+
+.button:hover {
+    background-color: green;
+}
+
+.link {
+    margin-top: 40px;
+    font-size: 14px;
+    color: orangered;
+}
+
+a {
+    color: whitesmoke;
+    text-decoration: none;
+}
+
+a:hover {
+    color: green;
 }
 
 .footer-fixed {
-    font-size: 0.75rem;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: orangered;
+    color: whitesmoke;
+    text-align: center;
+    font-size: 10px;
     padding: 10px;
-    box-sizing: border-box;
-}*/
+    height: 12.5px;
+}
+
+.footer-fixed p {
+    margin: 0;
+}
+
+.success {
+    color: green;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+.error {
+    color: whitesmoke;
+    font-weight: bold;
+    margin: 20px 0 10px;
+}
+
+@media (max-width: 600px) {
+    .button {
+        width: 50%;
+        font-size: 0.9rem;
+    }
+
+    input, select {
+        width: 80%;
+    }
+
+    .footer-fixed {
+        font-size: 0.65rem;
+        padding: 8px;
+    }
+}

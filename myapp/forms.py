@@ -19,11 +19,15 @@ class RegistrationForm(UserCreationForm):
     date_of_birth = forms.DateField(
         widget=forms.TextInput(attrs={
             #'type': 'date',
-            'placeholder': 'Date of Birth',
+            'placeholder': 'Date of Birth (dd-mm-yyyy)',
             'class': 'form-control datepicker'
 
         }), required=False, input_formats=['%d-%m-%Y']
     )
+
+  
+
+
     
     email = forms.EmailField(
         widget=forms.EmailInput(attrs={'placeholder': 'Email ID'}), required=True
