@@ -1,14 +1,93 @@
-*
-{
-    margin:0px;
-    padding:0px;
-    background-color:whitesmoke;
+/* Global Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-/* Footer stays at bottom */
+body {
+    background-color: whitesmoke;
+    font-family: Arial, sans-serif;
+    padding-top: 200px;
+}
+
+/* Fixed Logo */
+.logo {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: white;
+    text-align: center;
+    z-index: 1000;
+}
+
+.logo img {
+    height: 100px;
+    max-width: 90%;
+}
+
+/* Horizontal Menu */
+.horizontal-menu {
+    position: fixed;
+    top: 110px; /* Just below logo */
+    left: 0;
+    width: 100%;
+    background-color: white;
+    z-index: 999;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    padding: 10px 20px;
+    flex-wrap: wrap; /* Allows wrapping on smaller screens */
+}
+
+.horizontal-menu a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.horizontal-menu a img {
+    width: 50px;
+    height: auto;
+}
+
+.horizontal-menu a:hover {
+    background-color: orangered;
+    border-radius: 8px;
+}
+
+/* Logout Form */
+.logout-form {
+    display: flex;
+    justify-content: flex-end;
+    margin: 80px 20px 20px;
+}
+
+.logout-button {
+    background-color: orangered;
+    color: whitesmoke;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.logout-button:hover {
+    background-color: darkorange;
+}
+
+/* Footer */
 .footer-fixed {
     position: fixed;
-    bottom: 0px;
+    bottom: 0;
     width: 100%;
     background: orangered;
     text-align: center;
@@ -17,61 +96,34 @@
     color: whitesmoke;
     z-index: 2000;
 }
-.logout-form {
-    display: flex;
-    justify-content: flex-end; /* aligns to the right */
-    margin: 50px 20px 20px;
-    margin-top: 50px;
+
+/* Responsive Styling */
+@media (max-width: 768px) {
+    .logo img {
+        height: 80px;
+    }
+
+    .horizontal-menu a img {
+        width: 40px;
+    }
+
+    .logout-button {
+        font-size: 14px;
+        padding: 8px 16px;
+    }
 }
 
-.logout-button {
-    background-color: orangered;
-    cursor: pointer;
-    color: whitesmoke;
-    border: 1px solid whitesmoke;
-    padding: 10px 20px;
-    font-size: 16px;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2); 
-}
+@media (max-width: 480px) {
+    .horizontal-menu {
+        gap: 15px;
+        padding: 10px;
+    }
 
-.logout-button:hover {
-    background-color: green;
+    .logo img {
+        height: 60px;
+    }
 
-
-}
-.horizontal-menu a {
-    position: relative;
-    display: inline-block;
-    padding: 10px 15px;
-    text-decoration: none;
-    color: black;
-}
-.horizontal-menu a:hover {
-    color: white;
-    background-color: orangered;
-}
-.logo {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 120px;
-    background-color: white; /* optional, to keep background consistent */
-    z-index: 1000; /* makes sure it stays on top */
-}
-
-.horizontal-menu {
-    position: fixed;
-    top: 130px; /* place it below the logo */
-    left: 0;
-    width: 100%;
-    background-color: white; /* optional */
-    z-index: 999;
-    display: flex;
-    align-items: center;
-    padding: 10px 20px;
-}
-
-body {
-    padding-top: 200px; /* adjust to prevent content hiding behind fixed logo/menu */
+    .footer-fixed {
+        font-size: 12px;
+    }
 }
