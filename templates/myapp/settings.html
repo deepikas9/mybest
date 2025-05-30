@@ -2,122 +2,158 @@
 {% load widget_tweaks %}
 {% block title %}Settings{% endblock %}
 
-{% block content %}<br>
+{% block content %}
+<br>
 
-<h2 style="color: orangered;">Edit Your Profile</h2>
+<h2 style="color: orangered; text-align: center;">Edit Your Profile</h2>
 
-<form method="post">
+<form method="post" class="profile-form">
     {% csrf_token %}
-    <table>
-        <tr>
-            <td><label for="full_name">Full Name</label></td><td>:&nbsp;&nbsp;&nbsp;&nbsp;</td></label>
-            <td>{{ form.full_name|attr:"id:full_name"|attr:"class:input-field"|attr:"disabled:true" }}</td>
-        </tr>
-        <tr>    
-            <td><label for="dob">Date of Birth</td><td>:&nbsp;&nbsp;&nbsp;&nbsp;</td></label>
-            <td>{{ form.date_of_birth|attr:"id:dob"|attr:"class:input-field"|attr:"disabled:true" }}</td>
-        </tr>
-        <tr>
-            <td>    <label for="email">Email</td><td>:&nbsp;&nbsp;&nbsp;&nbsp;</td></label>
-            <td>{{ form.email|attr:"id:email"|attr:"class:input-field"|attr:"disabled:true" }}</td>
-        </tr>
-        <tr>
-            <td><button type="button" id="editBtn" onclick="enableEdit()">EDIT</button></td>
-            <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-            <td style="text-align: center;"><button type="submit" id="updateBtn" disabled>UPDATE</button></td>
-        </tr>
-    </table>
+    <div class="form-group">
+        <label for="full_name">Full Name</label>
+        {{ form.full_name|attr:"id:full_name"|attr:"class:input-field"|attr:"disabled:true" }}
+    </div>
+
+    <div class="form-group">
+        <label for="dob">Date of Birth</label>
+        {{ form.date_of_birth|attr:"id:dob"|attr:"class:input-field"|attr:"disabled:true" }}
+    </div>
+
+    <div class="form-group">
+        <label for="email">Email</label>
+        {{ form.email|attr:"id:email"|attr:"class:input-field"|attr:"disabled:true" }}
+    </div>
+
+    <div class="button-group">
+        <button type="button" id="editBtn" onclick="enableEdit()">Edit</button>
+        <button type="submit" id="updateBtn" disabled>Update</button>
+    </div>
 </form>
 
 <script>
 function enableEdit() {
-    document.getElementById("full_name").disabled = false;
+    const fields = ["full_name", "dob", "email"];
+    fields.forEach(function(id) {
+        const field = document.getElementById(id);
+        field.disabled = false;
+        field.style.backgroundColor = "white";
+        field.style.color = "black";
+    });
+    /*document.getElementById("full_name").disabled = false;
     document.getElementById("dob").disabled = false;
-    document.getElementById("email").disabled = false;
-        // Change edit button color
+    document.getElementById("email").disabled = false; */
     document.getElementById("updateBtn").disabled = false;
+
     const editButton = document.getElementById("editBtn");
-    editButton.style.backgroundColor = "blue";  // Green
-    editButton.style.color = "whitesmoke"; // White
+    editButton.style.backgroundColor = "blue";
+    editButton.style.color = "whitesmoke";
     editButton.innerText = "EDITING...";
 }
 </script>
 
 <style>
-    *
-    
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.profile-form {
+    max-width: 500px;
+    margin: auto;
+    padding: 20px;
+    background: black;
+    text-align: center;
+    color: gray;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    font-weight: bold;
+    margin-bottom: 6px;
+}
+
 .input-field {
-    width: 250px;
-    padding: 6px;
-    margin: 10px 0;
+    width: 100%;
+    max-width: 100%;
+    padding: 5px;
     border: 2px solid black;
     font-weight: bold;
     border-radius: 20px;
     text-align: center;
-    color: black;
-    background-color: whitesmoke;
-}
-.input-field:hover {
-    width: 250px;
-    padding: 6px;
-    margin: 10px 0;
-    border: 2px solid whitesmoke;
-    font-weight: bold;
-    border-radius: 20px;
-    text-align: center;
-    background-color: whitesmoke;
-}
-.input-field:focus {
-    width: 250px;
-    padding: 6px;
-    margin: 10px 0;
-    border: 2px solid green;
-    font-weight: bold;
-    border-radius: 20px;
-    text-align: center;
-    background-color: whitesmoke;
+    color: whitesmoke;
+    background-color: gray;
 }
 
-button {
-    margin-top: 10px;
+.input-field:focus {
+    border-color: green;
+    outline: none;
+    background-color: whitesmoke;
+    color: black;
+    
+}
+
+/* === Button Group (EDIT + UPDATE) === */
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 20px;
+    flex-wrap: nowrap;
+    border: 2px solid black;
+}
+
+.button-group button {
+    flex: 1;
     background-color: orangered;
     color: whitesmoke;
-    padding: 4px 10px;
+    padding: 5px;
     border: none;
-    width: 130px;
+    border-radius: 25px;
+    font-size: 1rem;
     cursor: pointer;
-    border-radius: 15px;
+    transition: all 0.3s ease;
+    min-width: 90px;
+    border: 2px solid black;
+    
 }
+
+
+
+/* === Hover/Disabled Styles === */
 button:hover {
-    margin-top: 10px;
     background-color: green;
-    color: whitesmoke;
-    padding: 4px 10px;
-    border: none;
-    width: 130px;
-    cursor: pointer;
-    border-radius: 15px;
-}
-button:hover {
     opacity: 0.9;
+    border: 2px solid black;
 }
-form {
-    display: flex;
-    justify-content: center;
-}
-table {
-    margin: auto;
-}
-td {
-    padding: 8px;
-    text-align: left;
-}
+
 button:disabled {
     background-color: orangered;
     color: lightgrey;
     cursor: not-allowed;
+    border: 2px solid black;
 }
 
+/* === Responsive for Small Devices === */
+@media (max-width: 600px) {
+    .button-group {
+        flex-direction: row;
+    }
+
+    .button-group button {
+        font-size: 0.9rem;
+    }
+
+    .logout-button button {
+        font-size: 0.95rem;
+    }
+}
 
 </style>
 {% endblock %}

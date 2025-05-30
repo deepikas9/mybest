@@ -8,14 +8,16 @@
 
 </head>
 <body>
-    <img src="{% static 'images/logo1.png'  %}" height=120px, alt="UME Logo" style="margin-top: 20px;">
+    <a href="{% url 'login' %}">
+        <img src="{% static 'images/logo1.png' %}" height="120px" alt="UME Logo" class="logo">
+    </a>
     <h2>Create Your Account</h2>
 
 <form method="post">
     {% csrf_token %}
 
     <div>
-    
+
         {{ form.full_name }}
         {% for error in form.full_name.errors %}
             <p class="error">{{ error }}</p>
@@ -23,7 +25,7 @@
     </div>
 
     <div>
-        
+
         {{ form.date_of_birth }}
         {% for error in form.date_of_birth.errors %}
             <p class="error">{{ error }}</p>
@@ -31,7 +33,7 @@
     </div>
 
     <div>
-        
+
         {{ form.email }}
         {% for error in form.email.errors %}
             <p class="error">{{ error }}</p>
@@ -39,7 +41,7 @@
     </div>
 
     <div>
-        
+
         {{ form.username }}
         {% for error in form.username.errors %}
             <p class="error">{{ error }}</p>
@@ -47,7 +49,7 @@
     </div>
 
     <div>
-    
+
         {{ form.password1 }}
         {% for error in form.password1.errors %}
             <p class="error">{{ error }}</p>
@@ -55,14 +57,14 @@
     </div>
 
     <div>
-        
+
         {{ form.password2 }}
         {% for error in form.password2.errors %}
             <p class="error">{{ error }}</p>
         {% endfor %}
     </div>
 
-    <button type="submit" class="button">Submit</button>
+    <button type="submit" class="button">Register</button>
 </form>
 
 {% if messages %}
@@ -88,7 +90,7 @@
 
 
         {{ form.username }}
-        <!--<button type="button" class="button">Availability</button> 
+        <!--<button type="button" class="button">Availability</button>
         {{ form.password1 }}
         {{ form.password2 }}
         <button type="submit" class="button">Submit</button>

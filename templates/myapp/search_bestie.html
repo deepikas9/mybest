@@ -1,0 +1,210 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block content %}
+<style>
+  .search-container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 10px;
+    background-color: #000;
+    text-align: center;
+  }
+  h2 {
+    color: whitesmoke;
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+
+  .search-container h2,
+  .search-container h3,
+  .search-container p {
+    color: orangered;
+  }
+
+  form input[type="text"],
+  form button {
+    padding: 5px;
+    font-size: 14px;
+    margin: 5px 0;
+    border-radius: 25px;
+    text-align: center;
+    border: 2px solid black;
+  }
+
+  .result-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+  }
+
+  .result-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: white;
+    color:black;
+    padding: 15px;
+    border-radius: 50px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+
+  .result-photo {
+    flex: 0 0 auto;
+  }
+
+  .result-photo img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #ccc;
+  }
+
+  .result-name {
+    flex: 1;
+    text-align: center;
+    color: blue;
+    
+    font-weight: bold;
+    font-size: 18px;
+  }
+
+  .result-action {
+    flex: 0 0 auto;
+    margin-left: 10px;
+  }
+
+  .result-action button {
+    padding: 5px 10px;
+    background-color: orangered;
+    color: white;
+    border: none;
+    
+    cursor: pointer;
+  }
+
+  .result-action button:disabled {
+    background-color: blue;
+    color: white;
+    padding: 5px 10px;
+    cursor: not-allowed;
+    border-radius: 25px;
+  }
+
+  @media screen and (max-width: 600px) {
+    .result-item {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .result-action {
+      margin-top: 10px;
+      margin-left: 0;
+    }
+  }
+  .search-btn {
+    background-color: orangered;
+    color: white;
+    border: none;
+    padding:5px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    border: 2px solid black;
+  }
+  .search-btn:hover {
+    background-color: green;
+  }
+</style>
+
+<div class="search-container">
+  <h2>Search Your Bestie</h2>
+
+  <form method="get" action="{% url 'search_bestie' %}">
+    {{ form.as_p }}
+    <button type="submit" class="search-btn">Search</button>
+  </form>
+
+  {% if results %}
+    <h3>Results:</h3>
+    <ul class="result-list">
+      {% for item in results %}
+        {% with user=item.user %}
+          <li class="result-item">
+            <!-- Photo -->
+            <div class="result-photo">
+              {% if user.photo %}
+                <img src="{{ user.photo.url }}" alt="{{ user.username }}">
+              {% else %}
+                <img src="{% static 'default-profile.png' %}" alt="No Photo">
+              {% endif %}
+            </div>
+
+            <!-- Name -->
+            <div class="result-name">
+              {{ user.full_name|default:user.username }}
+            </div>
+
+            <!-- Button -->
+            <div class="result-action">
+              {% if item.is_bestie %}
+                <button disabled>My Bestie</button>
+              {% elif item.sent_request %}
+                <button disabled>Requested</button>
+              {% elif item.received_request %}
+                <form method="post" action="{% url 'accept_bestie' user.id %}">
+                  {% csrf_token %}
+                  <input type="hidden" name="next" value="{{ current_path }}">
+                  <button type="submit">Accept</button>
+                </form>
+              {% else %}
+                <form method="post" action="{% url 'add_bestie' user.id %}" class="add-bestie-form" data-user-id="{{ user.id }}">
+                  {% csrf_token %}
+                  <input type="hidden" name="next" value="{{ current_path }}">
+                  <button type="submit">Add Bestie</button>
+                </form>
+              {% endif %}
+            </div>
+          </li>
+        {% endwith %}
+      {% endfor %}
+    </ul>
+  {% elif form.is_bound %}
+    <p>No results found.</p>
+  {% endif %}
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('.add-bestie-form').forEach(function (form) {
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+      const csrfToken = formData.get('csrfmiddlewaretoken');
+
+      fetch(form.action, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': csrfToken,
+          'X-Requested-With': 'XMLHttpRequest',
+        },
+        body: formData,
+      })
+      .then(response => {
+        if (response.ok) {
+          const button = form.querySelector('button');
+          button.disabled = true;
+          button.textContent = 'Requested';
+        } else {
+          alert('Failed to send bestie request.');
+        }
+      })
+      .catch(() => alert('Network error.'));
+    });
+  });
+});
+</script>
+{% endblock %}

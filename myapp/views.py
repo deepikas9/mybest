@@ -4,11 +4,13 @@ from .forms import LoginForm, UserVerificationForm, PasswordResetForm, UserProfi
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from .forms import RegistrationForm
-from .models import CustomUser
+from .models import CustomUser, BestieRequest
 from django.contrib.auth.decorators import login_required
 from django.utils.safestring import mark_safe
 from django.urls import reverse
 from django.contrib.auth import logout
+from .forms import BestieSearchForm
+from django.db.models import Q
 
 
 def login_view(request):
@@ -257,3 +259,366 @@ def edit_profile(request):
         form = UserProfileForm(instance=user)
 
     return render(request, 'myapp/settings.html', {'form': form})
+
+
+@login_required
+def search_bestie(request):
+    form = BestieSearchForm(request.GET or None)
+    results = []
+
+    if form.is_valid():
+        query = form.cleaned_data.get('query')
+        if query:
+            results = CustomUser.objects.filter(username__icontains=query).exclude(id=request.user.id).order_by('username')
+
+    sent_requests = BestieRequest.objects.filter(from_user=request.user, status='pending')
+    received_requests = BestieRequest.objects.filter(to_user=request.user, status='pending')
+
+    accepted_requests_from_me = BestieRequest.objects.filter(from_user=request.user, status='accepted')
+    accepted_requests_to_me = BestieRequest.objects.filter(to_user=request.user, status='accepted')
+
+    # Get all accepted besties (from either side)
+    accepted_user_ids = set()
+    accepted_user_ids.update(accepted_requests_from_me.values_list('to_user_id', flat=True))
+    accepted_user_ids.update(accepted_requests_to_me.values_list('from_user_id', flat=True))
+    besties = CustomUser.objects.filter(id__in=accepted_user_ids)
+
+    results_with_status = []
+    for user in results:
+        sent_req = sent_requests.filter(to_user=user).first()
+        received_req = received_requests.filter(from_user=user).first()
+        is_bestie = user in besties
+
+        results_with_status.append({
+            'user': user,
+            'is_bestie': is_bestie,
+            'sent_request': sent_req,
+            'received_request': received_req,
+        })
+
+    return render(request, 'myapp/search_bestie.html', {
+        'form': form,
+        'results': results_with_status,
+        'current_path': request.get_full_path(),
+    })
+
+'''
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .models import CustomUser, BestieRequest
+from .forms import BestieSearchForm
+
+
+@login_required
+def search_bestie(request):
+    form = BestieSearchForm(request.GET or None)
+    results = []
+
+    if form.is_valid():
+        query = form.cleaned_data.get('query')
+        if query:
+            results = CustomUser.objects.filter(username__icontains=query).exclude(id=request.user.id).order_by('username')
+
+    sent_requests = BestieRequest.objects.filter(from_user=request.user, status='pending')
+    received_requests = BestieRequest.objects.filter(to_user=request.user, status='pending')
+
+    accepted_requests_from_me = BestieRequest.objects.filter(from_user=request.user, status='accepted')
+    accepted_requests_to_me = BestieRequest.objects.filter(to_user=request.user, status='accepted')
+
+    # Get all accepted besties (from either side)
+    accepted_user_ids = set()
+    accepted_user_ids.update(accepted_requests_from_me.values_list('to_user_id', flat=True))
+    accepted_user_ids.update(accepted_requests_to_me.values_list('from_user_id', flat=True))
+    besties = CustomUser.objects.filter(id__in=accepted_user_ids)
+
+    results_with_status = []
+    for user in results:
+        sent_req = sent_requests.filter(to_user=user).first()
+        received_req = received_requests.filter(from_user=user).first()
+        is_bestie = user in besties
+
+        results_with_status.append({
+            'user': user,
+            'is_bestie': is_bestie,
+            'sent_request': sent_req,
+            'received_request': received_req,
+        })
+
+    return render(request, 'myapp/search_bestie.html', {
+        'form': form,
+        'results': results_with_status,
+    })
+'''
+
+@login_required
+def add_bestie(request, user_id):
+    if request.method == 'POST':
+        to_user = get_object_or_404(CustomUser, id=user_id)
+        from_user = request.user
+        if to_user != from_user:
+            existing_request = BestieRequest.objects.filter(from_user=from_user, to_user=to_user).first()
+            if existing_request:
+                if existing_request.status == 'pending':
+                    messages.info(request, f'You already sent a bestie request to {to_user.username}.')
+                elif existing_request.status == 'accepted':
+                    messages.info(request, f'{to_user.username} is already your bestie.')
+            else:
+                mutual_request = BestieRequest.objects.filter(from_user=to_user, to_user=from_user, status='pending').first()
+                if mutual_request:
+                    mutual_request.status = 'accepted'
+                    mutual_request.save()
+                    messages.success(request, f'Bestie request from {to_user.username} accepted automatically!')
+                else:
+                    BestieRequest.objects.create(from_user=from_user, to_user=to_user)
+                    messages.success(request, f'Bestie request sent to {to_user.username}.')
+    next_url = request.POST.get('next', 'search_bestie')
+    return redirect(next_url)
+
+
+@login_required
+def accept_bestie(request, user_id):
+    if request.method == 'POST':
+        from_user = get_object_or_404(CustomUser, id=user_id)
+        to_user = request.user
+
+        bestie_request = BestieRequest.objects.filter(from_user=from_user, to_user=to_user, status='pending').first()
+        if bestie_request:
+            bestie_request.status = 'accepted'
+            bestie_request.save()
+            messages.success(request, f'You and {from_user.username} are now besties!')
+        else:
+            messages.error(request, 'No pending request found.')
+    next_url = request.POST.get('next', 'search_bestie')
+    return redirect(next_url)
+
+
+@login_required
+def bestie_list(request):
+    besties = request.user.besties()
+    return render(request, 'myapp/bestie_list.html', {
+        'besties': besties
+    })
+
+
+@login_required
+def remove_bestie(request, user_id):
+    if request.method == 'POST':
+        bestie = get_object_or_404(CustomUser, id=user_id)
+        # Remove accepted requests from both sides to "remove" bestie relationship
+        BestieRequest.objects.filter(from_user=request.user, to_user=bestie, status='accepted').delete()
+        BestieRequest.objects.filter(from_user=bestie, to_user=request.user, status='accepted').delete()
+        messages.success(request, f'{bestie.username} has been removed from your besties.')
+    return redirect('bestie_list')
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .models import CustomUser, BestieRequest
+from .forms import BestieSearchForm
+
+
+@login_required
+def search_bestie(request):
+    form = BestieSearchForm(request.GET or None)
+    results = []
+
+    if form.is_valid():
+        query = form.cleaned_data.get('query')
+        if query:
+            results = CustomUser.objects.filter(username__icontains=query).exclude(id=request.user.id).order_by('username')
+
+    sent_requests = BestieRequest.objects.filter(from_user=request.user, status='pending')
+    received_requests = BestieRequest.objects.filter(to_user=request.user, status='pending')
+
+    accepted_requests_from_me = BestieRequest.objects.filter(from_user=request.user, status='accepted')
+    accepted_requests_to_me = BestieRequest.objects.filter(to_user=request.user, status='accepted')
+
+    # Get all accepted besties (from either side)
+    accepted_user_ids = set()
+    accepted_user_ids.update(accepted_requests_from_me.values_list('to_user_id', flat=True))
+    accepted_user_ids.update(accepted_requests_to_me.values_list('from_user_id', flat=True))
+    besties = CustomUser.objects.filter(id__in=accepted_user_ids)
+
+    results_with_status = []
+    for user in results:
+        sent_req = sent_requests.filter(to_user=user).first()
+        received_req = received_requests.filter(from_user=user).first()
+        is_bestie = user in besties
+
+        results_with_status.append({
+            'user': user,
+            'is_bestie': is_bestie,
+            'sent_request': sent_req,
+            'received_request': received_req,
+        })
+
+    return render(request, 'myapp/search_bestie.html', {
+        'form': form,
+        'results': results_with_status,
+    })
+
+
+# @login_required
+# def add_bestie(request, user_id):
+#     if request.method == 'POST':
+#         to_user = get_object_or_404(CustomUser, id=user_id)
+#         from_user = request.user
+#         if to_user != from_user:
+#             existing_request = BestieRequest.objects.filter(from_user=from_user, to_user=to_user).first()
+#             if existing_request:
+#                 if existing_request.status == 'pending':
+#                     messages.info(request, f'You already sent a bestie request to {to_user.username}.')
+#                 elif existing_request.status == 'accepted':
+#                     messages.info(request, f'{to_user.username} is already your bestie.')
+#             else:
+#                 mutual_request = BestieRequest.objects.filter(from_user=to_user, to_user=from_user, status='pending').first()
+#                 if mutual_request:
+#                     mutual_request.status = 'accepted'
+#                     mutual_request.save()
+#                     messages.success(request, f'Bestie request from {to_user.username} accepted automatically!')
+#                 else:
+#                     BestieRequest.objects.create(from_user=from_user, to_user=to_user)
+#                     messages.success(request, f'Bestie request sent to {to_user.username}.')
+#     next_url = request.POST.get('next', 'search_bestie')
+#     return redirect(next_url)
+
+
+@login_required
+def accept_bestie(request, user_id):
+    if request.method == 'POST':
+        from_user = get_object_or_404(CustomUser, id=user_id)
+        to_user = request.user
+
+        bestie_request = BestieRequest.objects.filter(from_user=from_user, to_user=to_user, status='pending').first()
+        if bestie_request:
+            bestie_request.status = 'accepted'
+            bestie_request.save()
+            messages.success(request, f'You and {from_user.username} are now besties!')
+        else:
+            messages.error(request, 'No pending request found.')
+    next_url = request.POST.get('next', 'search_bestie')
+    return redirect(next_url)
+
+
+@login_required
+def bestie_list(request):
+    besties = request.user.besties()
+    return render(request, 'myapp/bestie_list.html', {
+        'besties': besties
+    })
+
+
+@login_required
+def remove_bestie(request, user_id):
+    if request.method == 'POST':
+        bestie = get_object_or_404(CustomUser, id=user_id)
+        # Remove accepted requests from both sides to "remove" bestie relationship
+        BestieRequest.objects.filter(from_user=request.user, to_user=bestie, status='accepted').delete()
+        BestieRequest.objects.filter(from_user=bestie, to_user=request.user, status='accepted').delete()
+        messages.success(request, f'{bestie.username} has been removed from your besties.')
+    return redirect('bestie_list')
+
+
+from django.shortcuts import redirect, get_object_or_404
+
+# @login_required
+# def add_bestie(request, user_id):
+#     if request.method == 'POST':
+#         bestie = get_object_or_404(CustomUser, id=user_id)
+#         if bestie != request.user:
+#             request.user.besties.add(bestie)
+#     return redirect('search_bestie')  # name of the search view in urls.py
+
+
+'''
+@login_required
+def add_bestie(request, user_id):
+    if request.method == 'POST':
+        bestie = get_object_or_404(CustomUser, id=user_id)
+        if bestie != request.user:
+            request.user.besties.add(bestie)
+    next_url = request.POST.get('next', 'search_bestie')
+    return redirect(next_url)
+'''
+
+
+@login_required
+def add_bestie(request, user_id):
+    if request.method == 'POST':
+        to_user = get_object_or_404(CustomUser, id=user_id)
+        from_user = request.user
+        if to_user != from_user:
+            # Check if a request or relationship already exists
+            existing_request = BestieRequest.objects.filter(from_user=from_user, to_user=to_user).first()
+            if existing_request:
+                if existing_request.status == 'pending':
+                    messages.info(request, f'You already sent a bestie request to {to_user.username}.')
+                elif existing_request.status == 'accepted':
+                    messages.info(request, f'{to_user.username} is already your bestie.')
+            else:
+                # Also check if to_user has sent a request to from_user (mutual request)
+                mutual_request = BestieRequest.objects.filter(from_user=to_user, to_user=from_user, status='pending').first()
+                if mutual_request:
+                    # Accept mutual request automatically and create bestie relationship
+                    mutual_request.status = 'accepted'
+                    mutual_request.save()
+                    messages.success(request, f'Bestie request from {to_user.username} accepted automatically!')
+
+                    # Optionally create reciprocal accepted request or handle M2M besties
+                else:
+                    BestieRequest.objects.create(from_user=from_user, to_user=to_user)
+                    messages.success(request, f'Bestie request sent to {to_user.username}.')
+    next_url = request.POST.get('next', 'search_bestie')
+    return redirect(next_url)
+
+
+@login_required
+def accept_bestie(request, user_id):
+    if request.method == 'POST':
+        from_user = get_object_or_404(CustomUser, id=user_id)
+        to_user = request.user
+
+        bestie_request = BestieRequest.objects.filter(from_user=from_user, to_user=to_user, status='pending').first()
+        if bestie_request:
+            bestie_request.status = 'accepted'
+            bestie_request.save()
+
+            # Optionally create reciprocal accepted request
+            # BestieRequest.objects.create(from_user=to_user, to_user=from_user, status='accepted')
+
+            messages.success(request, f'You and {from_user.username} are now besties!')
+        else:
+            messages.error(request, 'No pending request found.')
+    next_url = request.POST.get('next', 'search_bestie')
+    return redirect(next_url)
+
+
+
+
+@login_required
+def bestie_list(request):
+    #   besties = request.user.besties.all()
+    besties = request.user.besties()  # Note the parentheses to call the method
+
+    return render(request, 'myapp/bestie_list.html', {
+        'besties': besties
+    })
+
+
+'''
+@login_required
+def remove_bestie(request, user_id):
+    if request.method == 'POST':
+        bestie = get_object_or_404(CustomUser, id=user_id)
+        request.user.besties.remove(bestie)
+    return redirect('bestie_list')
+'''
+
+@login_required
+def bestie_inbox(request):
+    received_requests = BestieRequest.objects.filter(to_user=request.user, status='pending').select_related('from_user')
+
+    return render(request, 'myapp/home.html', {
+        'received_requests': received_requests,
+    })

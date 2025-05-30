@@ -1,6 +1,111 @@
 {% extends "base.html" %}
-{% block title %}My Add Bestie{% endblock %}
+{% block title %}Search Your Bestie{% endblock %}
 {% block content %}
-<h2>Welcome {{ user.full_name }}</h2>
-<p>You can add your Besties Here</p>
+<style>
+    body {
+        font-family: Arial;
+        color: red;
+    }
+
+    .search-box {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 20px;
+    }
+
+    .search-box input[type="text"] {
+        padding: 10px;
+        width: 300px;
+        border: 3px solid red;
+        border-radius: 5px;
+        font-size: 16px;
+        text-align: center;
+        color: red;
+        font-weight: bold;
+    }
+
+    .search-box button {
+        background-color: red;
+        color: white;
+        font-weight: bold;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 15px;
+        margin-left: 10px;
+        cursor: pointer;
+    }
+
+    h3 {
+        margin-left: 30px;
+    }
+
+    .result-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border: 3px solid black;
+        padding: 10px;
+        margin: 10px;
+    }
+
+    .photo-box {
+        border: 3px solid red;
+        padding: 10px;
+        margin-right: 20px;
+        width: 80px;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .photo-box img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: cover;
+    }
+
+    .user-info {
+        flex-grow: 1;
+    }
+
+    .add-btn {
+        background-color: red;
+        color: white;
+        padding: 10px;
+        border: none;
+        font-weight: bold;
+        cursor: pointer;
+    }
+</style>
+
+<!-- Search Form -->
+<form method="get">
+    <div class="search-box">
+        <input type="text" name="query" placeholder="Search by username" value="{{ request.GET.query }}">
+        <button type="submit">Search</button>
+    </div>
+</form>
+
+<!-- Results -->
+<h3>Results</h3>
+{% for user in results %}
+    <div class="result-item">
+        <div class="photo-box">
+            {% if user.photo %}
+                <img src="{{ user.photo.url }}" alt="User photo">
+            {% else %}
+                <span>Photo</span>
+            {% endif %}
+        </div>
+        <div class="user-info">
+            <div><strong>fullname :</strong> {{ user.full_name }}</div>
+            <div><strong>username :</strong> {{ user.username }}</div>
+        </div>
+        <button class="add-btn">Add Bestie</button>
+    </div>
+{% empty %}
+    <p style="margin-left: 30px;">No results found.</p>
+{% endfor %}
 {% endblock %}

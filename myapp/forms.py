@@ -13,46 +13,18 @@ class LoginForm(forms.Form):
 class RegistrationForm(UserCreationForm):
     full_name = forms.CharField(
         max_length=100, required=True,
-        widget=forms.TextInput(attrs={'placeholder': 'Full Name'})
-    )
+        widget=forms.TextInput(attrs={'placeholder': 'Full Name'}))
     
     date_of_birth = forms.DateField(
         widget=forms.TextInput(attrs={
-            #'type': 'date',
             'placeholder': 'Date of Birth (dd-mm-yyyy)',
-            'class': 'form-control datepicker'
-
-        }), required=False, input_formats=['%d-%m-%Y']
-    )
-
-  
-
-
+            'class': 'form-control datepicker',
+            'autocomplete': 'off'}), 
+            required=False, input_formats=['%d-%m-%Y'])
     
     email = forms.EmailField(
-        widget=forms.EmailInput(attrs={'placeholder': 'Email ID'}), required=True
-    )
+        widget=forms.EmailInput(attrs={'placeholder': 'Email ID'}), required=True)
     
-    # GENDER_CHOICES = [
-    #     ('M', 'Male'), ('F', 'Female'), ('O', 'Other'),
-    # ]
-    # gender = forms.ChoiceField(
-    #     choices=GENDER_CHOICES,
-    #     widget=forms.RadioSelect
-    # )
-    
-    # username = forms.CharField(
-    #     max_length=50,
-    #     widget=forms.TextInput(attrs={'placeholder': 'Choose a username'})
-    # )
-    
-    # password = forms.CharField(
-    #     widget=forms.PasswordInput(attrs={'placeholder': 'Enter a password'})
-    # )
-    
-    # confirm_password = forms.CharField(
-    #     widget=forms.PasswordInput(attrs={'placeholder': 'Confirm your password'})
-    # )
     class Meta:
         model = CustomUser
         fields = ['full_name', 'date_of_birth', 'email',  'username', 'password1', 'password2']
@@ -105,3 +77,16 @@ class UserProfileForm(forms.ModelForm):
             'email': forms.EmailInput(attrs={'placeholder': 'Email'}),
               # assuming you're storing gender as text
         }
+
+class BestieSearchForm(forms.Form):
+    query = forms.CharField(
+        label='',
+        max_length=100,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Search by username',
+            'class': 'search-input',
+            'name': 'query',
+            'autocomplete': 'off',
+        })
+    )

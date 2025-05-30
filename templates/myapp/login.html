@@ -10,7 +10,9 @@
 
 </head>
 <body>
-    <img src="{% static 'images/logo1.png'  %}" height=120px, alt="UME Logo" style="margin-top: 20px;">
+    <a href="{% url 'login' %}">
+        <img src="{% static 'images/logo1.png' %}" height="120px" alt="UME Logo" class="logo">
+    </a>
     <h2>Login Here</h2>
 
     <form method="post">

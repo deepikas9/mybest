@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}My Besties{% endblock %}
+
+{% block content %}
+<style>
+  .besties-container {
+    max-width: 700px;
+    margin: 30px auto;
+    padding: 20px;
+    background-color: #000;
+    border-radius: 10px;
+  }
+
+  .besties-container h2 {
+    color: orangered;
+    margin-bottom: 20px;
+  }
+
+  .bestie-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: white;
+    padding: 15px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    flex-wrap: wrap;
+  }
+
+  .bestie-info {
+    display: flex;
+    align-items: center;
+    flex: 1;
+  }
+
+  .bestie-photo {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 15px;
+  }
+
+  .bestie-name {
+    font-weight: bold;
+    color: orangered;
+    font-size: 18px;
+  }
+
+  .remove-btn {
+    flex-shrink: 0;
+  }
+
+  .remove-btn button {
+    background-color: orangered;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  @media (max-width: 600px) {
+    .bestie-item {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .remove-btn {
+      margin-top: 10px;
+      width: 100%;
+    }
+
+    .remove-btn button {
+      width: 100%;
+    }
+  }
+</style>
+
+<div class="besties-container">
+  <h2>My Besties</h2>
+
+  {% if besties %}
+    <ul style="padding: 0; list-style: none;">
+      {% for bestie in besties %}
+        <li class="bestie-item">
+          <div class="bestie-info">
+            {% if bestie.photo %}
+              <img src="{{ bestie.photo.url }}" alt="{{ bestie.username }}" class="bestie-photo">
+            {% else %}
+              <img src="{% static 'default-profile.png' %}" alt="No Photo" class="bestie-photo">
+            {% endif %}
+            <span class="bestie-name">{{ bestie.full_name|default:bestie.username }}</span>
+          </div>
+          <div class="remove-btn">
+            <form method="post" action="{% url 'remove_bestie' bestie.id %}">
+              {% csrf_token %}
+              <button type="submit">Remove</button>
+            </form>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p style="color: white;">You have no besties yet.</p>
+  {% endif %}
+</div>
+
+{% endblock %}
