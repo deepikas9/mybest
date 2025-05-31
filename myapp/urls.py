@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import login_view, register_view, profile_view,forgot_password_view, home_view, besties_view, add_bestie_view, edit_profile
 from django.contrib.auth.views import LogoutView
-from .views import search_bestie,add_bestie, bestie_list, remove_bestie,bestie_inbox,accept_bestie
+from .views import search_bestie,add_bestie, bestie_list, remove_bestie,bestie_inbox,accept_bestie,cancel_bestie_request
 
 urlpatterns = [
     path('login/', login_view, name='login'),
@@ -19,6 +19,8 @@ urlpatterns = [
     path('my-besties/', bestie_list, name='bestie_list'),
     path('accept-bestie/<int:user_id>/', accept_bestie, name='accept_bestie'),
     path('remove-bestie/<int:user_id>/', remove_bestie, name='remove_bestie'),
+    path('cancel-bestie/<int:user_id>/', cancel_bestie_request, name='cancel_bestie_request'),
+
 
     
 ]

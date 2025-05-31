@@ -10,9 +10,7 @@
 
 </head>
 <body>
-    <a href="{% url 'login' %}">
-        <img src="{% static 'images/logo1.png' %}" height="120px" alt="UME Logo" class="logo">
-    </a>
+    <img src="{% static 'images/logo1.png'  %}" height=120px, alt="UME Logo" style="margin-top: 20px;">
     <h2>Login Here</h2>
 
     <form method="post">
@@ -25,9 +23,7 @@
         <button type="submit" class="btn">Login</button>
     
 
-    <!--{% if message %}
-        <p class="error-message">{{ message }}</p>
-    {% endif %} -->
+
 
     {% if messages %} 
       <ul class="messages">

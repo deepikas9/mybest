@@ -7,30 +7,37 @@
   .search-container {
     max-width: 700px;
     margin: 0 auto;
-    padding: 10px;
+    padding: 15px;
     background-color: #000;
-    text-align: center;
-  }
-  h2 {
-    color: whitesmoke;
-    font-size: 20px;
-    margin-bottom: 20px;
+    border-radius: 10px;
   }
 
-  .search-container h2,
-  .search-container h3,
-  .search-container p {
+  h2, h3 {
     color: orangered;
+    text-align: center;
+    margin-bottom: 20px;
   }
 
   form input[type="text"],
   form button {
-    padding: 5px;
-    font-size: 14px;
-    margin: 5px 0;
+    padding: 10px;
+    font-size: 16px;
     border-radius: 25px;
-    text-align: center;
     border: 2px solid black;
+    margin: 10px 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .search-btn {
+    background-color: orangered;
+    color: white;
+    font-weight: bold;
+    transition: background-color 0.3s;
+  }
+
+  .search-btn:hover {
+    background-color: green;
   }
 
   .result-list {
@@ -40,82 +47,77 @@
   }
 
   .result-item {
+    background: white;
+    color: black;
+    border-radius: 15px;
+    padding: 15px;
+    margin-bottom: 15px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: white;
-    color:black;
-    padding: 15px;
-    border-radius: 50px;
-    margin-bottom: 12px;
     flex-wrap: wrap;
-  }
-
-  .result-photo {
-    flex: 0 0 auto;
+    gap: 10px;
   }
 
   .result-photo img {
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
     object-fit: cover;
-    border: 1px solid #ccc;
+    border: 2px solid #ccc;
   }
 
   .result-name {
     flex: 1;
     text-align: center;
-    color: blue;
-    
     font-weight: bold;
+    color: #007bff;
     font-size: 18px;
+    word-break: break-word;
   }
 
   .result-action {
-    flex: 0 0 auto;
-    margin-left: 10px;
+    text-align: center;
   }
 
   .result-action button {
-    padding: 5px 10px;
     background-color: orangered;
     color: white;
+    padding: 8px 16px;
+    font-size: 14px;
+    border-radius: 25px;
     border: none;
-    
     cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .result-action button:hover {
+    background-color: green;
   }
 
   .result-action button:disabled {
-    background-color: blue;
-    color: white;
-    padding: 5px 10px;
+    background-color: #999;
     cursor: not-allowed;
-    border-radius: 25px;
   }
 
-  @media screen and (max-width: 600px) {
+  @media (max-width: 600px) {
     .result-item {
       flex-direction: column;
-      text-align: center;
+      align-items: center;
+    }
+
+    .result-name {
+      margin-top: 10px;
     }
 
     .result-action {
-      margin-top: 10px;
-      margin-left: 0;
+      width: 100%;
     }
-  }
-  .search-btn {
-    background-color: orangered;
-    color: white;
-    border: none;
-    padding:5px 20px;
-    border-radius: 25px;
-    cursor: pointer;
-    border: 2px solid black;
-  }
-  .search-btn:hover {
-    background-color: green;
+
+    .result-action form,
+    .result-action button {
+      width: 100%;
+    }
   }
 </style>
 
@@ -133,7 +135,7 @@
       {% for item in results %}
         {% with user=item.user %}
           <li class="result-item">
-            <!-- Photo -->
+            <!-- Profile Image -->
             <div class="result-photo">
               {% if user.photo %}
                 <img src="{{ user.photo.url }}" alt="{{ user.username }}">
@@ -147,22 +149,29 @@
               {{ user.full_name|default:user.username }}
             </div>
 
-            <!-- Button -->
+            <!-- Action Buttons -->
             <div class="result-action">
               {% if item.is_bestie %}
                 <button disabled>My Bestie</button>
+
               {% elif item.sent_request %}
-                <button disabled>Requested</button>
+                <form method="post" action="{% url 'cancel_bestie_request' user.id %}" class="cancel-request-form" data-user-id="{{ user.id }}">
+                  {% csrf_token %}
+                  <input type="hidden" name="next" value="{% url 'search_bestie' %}">
+                  <button type="submit">Cancel Bestie</button>
+                </form>
+
               {% elif item.received_request %}
                 <form method="post" action="{% url 'accept_bestie' user.id %}">
                   {% csrf_token %}
-                  <input type="hidden" name="next" value="{{ current_path }}">
+                  <input type="hidden" name="next" value="{% url 'search_bestie' %}">
                   <button type="submit">Accept</button>
                 </form>
+
               {% else %}
                 <form method="post" action="{% url 'add_bestie' user.id %}" class="add-bestie-form" data-user-id="{{ user.id }}">
                   {% csrf_token %}
-                  <input type="hidden" name="next" value="{{ current_path }}">
+                  <input type="hidden" name="next" value="{{ request.path }}">
                   <button type="submit">Add Bestie</button>
                 </form>
               {% endif %}
@@ -172,39 +181,77 @@
       {% endfor %}
     </ul>
   {% elif form.is_bound %}
-    <p>No results found.</p>
+    <p style="color: white;">No results found.</p>
   {% endif %}
 </div>
 
+<!-- AJAX Script for Add/Cancel -->
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-  document.querySelectorAll('.add-bestie-form').forEach(function (form) {
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
+  function bindAddBestieButtons() {
+    document.querySelectorAll('.add-bestie-form').forEach(form => {
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const userId = form.dataset.userId;
+        const formData = new FormData(form);
+        const csrfToken = formData.get('csrfmiddlewaretoken');
 
-      const formData = new FormData(form);
-      const csrfToken = formData.get('csrfmiddlewaretoken');
-
-      fetch(form.action, {
-        method: 'POST',
-        headers: {
-          'X-CSRFToken': csrfToken,
-          'X-Requested-With': 'XMLHttpRequest',
-        },
-        body: formData,
-      })
-      .then(response => {
-        if (response.ok) {
-          const button = form.querySelector('button');
-          button.disabled = true;
-          button.textContent = 'Requested';
-        } else {
-          alert('Failed to send bestie request.');
-        }
-      })
-      .catch(() => alert('Network error.'));
+        fetch(form.action, {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': csrfToken,
+            'X-Requested-With': 'XMLHttpRequest',
+          },
+          body: formData,
+        }).then(response => {
+          if (response.ok) {
+            form.outerHTML = `
+              <form method="post" action="/cancel-bestie/${userId}/" class="cancel-request-form" data-user-id="${userId}">
+                <input type="hidden" name="csrfmiddlewaretoken" value="${csrfToken}">
+                <input type="hidden" name="next" value="/search-bestie/">
+                <button type="submit">Cancel Request</button>
+              </form>
+            `;
+            bindCancelButtons();
+          }
+        });
+      });
     });
-  });
+  }
+
+  function bindCancelButtons() {
+    document.querySelectorAll('.cancel-request-form').forEach(form => {
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const userId = form.dataset.userId;
+        const formData = new FormData(form);
+        const csrfToken = formData.get('csrfmiddlewaretoken');
+
+        fetch(form.action, {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': csrfToken,
+            'X-Requested-With': 'XMLHttpRequest',
+          },
+          body: formData,
+        }).then(response => {
+          if (response.ok) {
+            form.outerHTML = `
+              <form method="post" action="/add-bestie/${userId}/" class="add-bestie-form" data-user-id="${userId}">
+                <input type="hidden" name="csrfmiddlewaretoken" value="${csrfToken}">
+                <input type="hidden" name="next" value="/search-bestie/">
+                <button type="submit">Add Bestie</button>
+              </form>
+            `;
+            bindAddBestieButtons();
+          }
+        });
+      });
+    });
+  }
+
+  bindAddBestieButtons();
+  bindCancelButtons();
 });
 </script>
 {% endblock %}

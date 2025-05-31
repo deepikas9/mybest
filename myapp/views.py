@@ -15,8 +15,14 @@ from django.db.models import Q
 
 def login_view(request):
     form = LoginForm(request.POST or None)
-    message = ''
+    #message = ''
     next_url = request.GET.get('next') or request.POST.get('next') or 'home' # handle GET and POST cases
+
+    
+    # ✅ Show message if session was logged out
+    if request.GET.get('session_expired') == '1':
+        messages.info(request, "Your session was logged out.....")
+
 
     if request.method == 'POST':
         if form.is_valid():
@@ -26,10 +32,11 @@ def login_view(request):
             )
             if user is not None:
                 login(request, user)
-                return redirect('home')
+                return redirect(next_url)
             else:
                 messages.error(request, 'Invalid credentials') #message = 'Invalid credentials'
-    return render(request, 'myapp/login.html', {'form': form, 'message': message, 'next': next_url})
+                #messages.info(request, "Your session was logged out.")
+    return render(request, 'myapp/login.html', {'form': form,   'next': next_url})
 
 
 def register_view(request):
@@ -42,12 +49,12 @@ def register_view(request):
             # If you're collecting extra fields not handled by UserCreationForm
             user.full_name = form.cleaned_data['full_name']
             user.date_of_birth = form.cleaned_data['date_of_birth']
-            
+
             user.email = form.cleaned_data['email']
-            user.set_password(form.cleaned_data['password1']) 
+            user.set_password(form.cleaned_data['password1'])
             user.save()
             messages.success(request, 'Account created successfully! You can now log in.')
-            return redirect('register')  # Make sure 'login' is a valid URL name        
+            return redirect('register')  # Make sure 'login' is a valid URL name
         else:
             messages.error(request, 'Please correct the errors.')
     else:
@@ -132,7 +139,7 @@ def forgot_password_view(request):
                     reset_form = PasswordResetForm()
                 except CustomUser.DoesNotExist:
                     messages.error(request, "No user found with the provided details.")
-        
+
         elif 'reset_password' in request.POST:
             reset_form = PasswordResetForm(request.POST)
             if reset_form.is_valid():
@@ -249,7 +256,7 @@ def edit_profile(request):
     user = request.user
     if request.method == 'POST':
         form = UserProfileForm(request.POST, instance=user)
-    
+
         print(request.user.full_name)
         print(request.user.date_of_birth)
         if form.is_valid():
@@ -351,7 +358,7 @@ def search_bestie(request):
         'results': results_with_status,
     })
 '''
-
+'''
 @login_required
 def add_bestie(request, user_id):
     if request.method == 'POST':
@@ -375,7 +382,7 @@ def add_bestie(request, user_id):
                     messages.success(request, f'Bestie request sent to {to_user.username}.')
     next_url = request.POST.get('next', 'search_bestie')
     return redirect(next_url)
-
+'''
 
 @login_required
 def accept_bestie(request, user_id):
@@ -411,6 +418,8 @@ def remove_bestie(request, user_id):
         BestieRequest.objects.filter(from_user=bestie, to_user=request.user, status='accepted').delete()
         messages.success(request, f'{bestie.username} has been removed from your besties.')
     return redirect('bestie_list')
+
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -483,6 +492,8 @@ def search_bestie(request):
 #     next_url = request.POST.get('next', 'search_bestie')
 #     return redirect(next_url)
 
+from django.utils.http import url_has_allowed_host_and_scheme
+from django.conf import settings
 
 @login_required
 def accept_bestie(request, user_id):
@@ -497,7 +508,10 @@ def accept_bestie(request, user_id):
             messages.success(request, f'You and {from_user.username} are now besties!')
         else:
             messages.error(request, 'No pending request found.')
-    next_url = request.POST.get('next', 'search_bestie')
+    next_url = request.POST.get('next')
+    # If next_url is safe and valid, use it; otherwise, reverse to fallback URL name
+    if not next_url or not url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}):
+        next_url = reverse('search_bestie')
     return redirect(next_url)
 
 
@@ -543,34 +557,34 @@ def add_bestie(request, user_id):
 '''
 
 
-@login_required
-def add_bestie(request, user_id):
-    if request.method == 'POST':
-        to_user = get_object_or_404(CustomUser, id=user_id)
-        from_user = request.user
-        if to_user != from_user:
-            # Check if a request or relationship already exists
-            existing_request = BestieRequest.objects.filter(from_user=from_user, to_user=to_user).first()
-            if existing_request:
-                if existing_request.status == 'pending':
-                    messages.info(request, f'You already sent a bestie request to {to_user.username}.')
-                elif existing_request.status == 'accepted':
-                    messages.info(request, f'{to_user.username} is already your bestie.')
-            else:
-                # Also check if to_user has sent a request to from_user (mutual request)
-                mutual_request = BestieRequest.objects.filter(from_user=to_user, to_user=from_user, status='pending').first()
-                if mutual_request:
-                    # Accept mutual request automatically and create bestie relationship
-                    mutual_request.status = 'accepted'
-                    mutual_request.save()
-                    messages.success(request, f'Bestie request from {to_user.username} accepted automatically!')
+# @login_required
+# def add_bestie(request, user_id):
+#     if request.method == 'POST':
+#         to_user = get_object_or_404(CustomUser, id=user_id)
+#         from_user = request.user
+#         if to_user != from_user:
+#             # Check if a request or relationship already exists
+#             existing_request = BestieRequest.objects.filter(from_user=from_user, to_user=to_user).first()
+#             if existing_request:
+#                 if existing_request.status == 'pending':
+#                     messages.info(request, f'You already sent a bestie request to {to_user.username}.')
+#                 elif existing_request.status == 'accepted':
+#                     messages.info(request, f'{to_user.username} is already your bestie.')
+#             else:
+#                 # Also check if to_user has sent a request to from_user (mutual request)
+#                 mutual_request = BestieRequest.objects.filter(from_user=to_user, to_user=from_user, status='pending').first()
+#                 if mutual_request:
+#                     # Accept mutual request automatically and create bestie relationship
+#                     mutual_request.status = 'accepted'
+#                     mutual_request.save()
+#                     messages.success(request, f'Bestie request from {to_user.username} accepted automatically!')
 
-                    # Optionally create reciprocal accepted request or handle M2M besties
-                else:
-                    BestieRequest.objects.create(from_user=from_user, to_user=to_user)
-                    messages.success(request, f'Bestie request sent to {to_user.username}.')
-    next_url = request.POST.get('next', 'search_bestie')
-    return redirect(next_url)
+#                     # Optionally create reciprocal accepted request or handle M2M besties
+#                 else:
+#                     BestieRequest.objects.create(from_user=from_user, to_user=to_user)
+#                     messages.success(request, f'Bestie request sent to {to_user.username}.')
+#     next_url = request.POST.get('next', 'search_bestie')
+#     return redirect(next_url)
 
 
 @login_required
@@ -622,3 +636,73 @@ def bestie_inbox(request):
     return render(request, 'myapp/home.html', {
         'received_requests': received_requests,
     })
+
+from django.http import JsonResponse
+from django.shortcuts import redirect, get_object_or_404
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from .models import BestieRequest, CustomUser
+
+@login_required
+def add_bestie(request, user_id):
+    if request.method == 'POST':
+        to_user = get_object_or_404(CustomUser, id=user_id)
+        from_user = request.user
+
+        if to_user != from_user:
+            existing_request = BestieRequest.objects.filter(from_user=from_user, to_user=to_user).first()
+
+            if existing_request:
+                if existing_request.status == 'pending':
+                    msg = f'You already sent a bestie request to {to_user.username}.'
+                    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+                        return JsonResponse({'status': 'exists', 'message': msg}, status=200)
+                    messages.info(request, msg)
+                elif existing_request.status == 'accepted':
+                    msg = f'{to_user.username} is already your bestie.'
+                    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+                        return JsonResponse({'status': 'already', 'message': msg}, status=200)
+                    messages.info(request, msg)
+
+            else:
+                mutual_request = BestieRequest.objects.filter(from_user=to_user, to_user=from_user, status='pending').first()
+                if mutual_request:
+                    mutual_request.status = 'accepted'
+                    mutual_request.save()
+                    msg = f'Bestie request from {to_user.username} accepted automatically!'
+                    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+                        return JsonResponse({'status': 'accepted', 'message': msg}, status=200)
+                    messages.success(request, msg)
+                else:
+                    BestieRequest.objects.create(from_user=from_user, to_user=to_user)
+                    msg = f'Bestie request sent to {to_user.username}.'
+                    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+                        return JsonResponse({'status': 'sent', 'message': msg}, status=201)
+                    messages.success(request, msg)
+
+    # Normal fallback redirect (for non-AJAX)
+    next_url = request.POST.get('next', 'search_bestie')
+    return redirect(next_url)
+
+
+from django.views.decorators.http import require_POST
+from django.http import JsonResponse
+
+@require_POST
+@login_required
+def cancel_bestie_request(request, user_id):
+    to_user = get_object_or_404(CustomUser, id=user_id)
+    from_user = request.user
+
+    bestie_request = BestieRequest.objects.filter(from_user=from_user, to_user=to_user, status='pending').first()
+    if bestie_request:
+        bestie_request.delete()
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'success': True})
+        messages.success(request, 'Bestie request canceled.')
+    else:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'success': False}, status=404)
+        messages.error(request, 'No pending request to cancel.')
+
+    return redirect(request.POST.get('next', 'search_bestie'))

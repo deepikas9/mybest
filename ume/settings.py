@@ -45,21 +45,39 @@ LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/home/'
 LOGOUT_REDIRECT_URL = '/login/'
 
+# MIDDLEWARE = [
+#     'django.middleware.security.SecurityMiddleware',
+#     'django.contrib.sessions.middleware.SessionMiddleware',
+#     'django.middleware.common.CommonMiddleware',
+#     'django.middleware.csrf.CsrfViewMiddleware',
+#     'django.contrib.auth.middleware.AuthenticationMiddleware',
+#     'myapp.middleware.auto_logout.AutoLogoutMiddleware',
+#     'django.contrib.messages.middleware.MessageMiddleware',
+#     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+#     'myapp.middleware.single_session_middleware.OneSessionPerUserMiddleware',
+# ]
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    
+    # ✅ Your session middleware must go here:
+    'myapp.middleware.single_session_middleware.OneSessionPerUserMiddleware',
+    
+    # ✅ Then message middleware AFTER
     'myapp.middleware.auto_logout.AutoLogoutMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'myapp.middleware.single_session_middleware.OneSessionPerUserMiddleware',
 ]
+
 
 ROOT_URLCONF = 'ume.urls'
 AUTH_USER_MODEL = 'myapp.CustomUser'
-AUTO_LOGOUT_DELAY = 60300
+AUTO_LOGOUT_DELAY = 60 * 15  # 15 minutes
+SESSION_SAVE_EVERY_REQUEST = True
 
 
 TEMPLATES = [
