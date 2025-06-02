@@ -4,53 +4,77 @@
 
 {% block content %}
 <style>
+  body {
+    background-color: #000;
+    font-family: 'Segoe UI', sans-serif;
+  }
+
   .besties-container {
-    max-width: 700px;
+    max-width: 800px;
     margin: 30px auto;
     padding: 20px;
-    background-color: #000;
-    border-radius: 10px;
+    background-color: #111;
+    border-radius: 16px;
+    box-shadow: 0 0 15px whitesmoke;
   }
 
   .besties-container h2 {
     color: orangered;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
+    font-size: 26px;
+    text-align: center;
+  }
+
+  .bestie-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
   }
 
   .bestie-item {
     display: flex;
+    flex-direction: row;
     align-items: center;
-    justify-content: space-between;
-    background: white;
+    background-color: lightgray;
     padding: 15px;
-    margin-bottom: 12px;
-    border-radius: 8px;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-    flex-wrap: wrap;
-  }
-
-  .bestie-info {
-    display: flex;
-    align-items: center;
-    flex: 1;
+    margin-bottom: 16px;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px black;
+    gap: 16px;
+    flex-wrap: nowrap;
   }
 
   .bestie-photo {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    border-radius: 16px;
     object-fit: cover;
-    margin-right: 15px;
+    border: 2px solid black;
+    flex-shrink: 0;
+  }
+
+  .bestie-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1;
+    color: black;
+    gap: 10px;
   }
 
   .bestie-name {
-    font-weight: bold;
-    color: orangered;
     font-size: 18px;
+    font-weight: bold;
+    word-break: break-word;
   }
 
   .remove-btn {
-    flex-shrink: 0;
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  .remove-btn form {
+    margin: 0;
   }
 
   .remove-btn button {
@@ -58,24 +82,37 @@
     color: white;
     border: none;
     padding: 8px 16px;
-    border-radius: 6px;
-    cursor: pointer;
+    border-radius: 20px;
     font-size: 14px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    transition: background 0.3s ease;
   }
 
+  .remove-btn button:hover {
+    background-color: green;
+  }
+
+  /* Make sure it stays two-column even on small screens */
   @media (max-width: 600px) {
     .bestie-item {
-      flex-direction: column;
-      align-items: flex-start;
+      flex-direction: row;
+      align-items: center;
+      gap: 12px;
     }
 
-    .remove-btn {
-      margin-top: 10px;
-      width: 100%;
+    .bestie-photo {
+      width: 60px;
+      height: 60px;
+    }
+
+    .bestie-name {
+      font-size: 16px;
     }
 
     .remove-btn button {
-      width: 100%;
+      font-size: 13px;
+      padding: 6px 12px;
     }
   }
 </style>
@@ -84,29 +121,24 @@
   <h2>My Besties</h2>
 
   {% if besties %}
-    <ul style="padding: 0; list-style: none;">
+    <ul class="bestie-list">
       {% for bestie in besties %}
         <li class="bestie-item">
-          <div class="bestie-info">
-            {% if bestie.photo %}
-              <img src="{{ bestie.photo.url }}" alt="{{ bestie.username }}" class="bestie-photo">
-            {% else %}
-              <img src="{% static 'default-profile.png' %}" alt="No Photo" class="bestie-photo">
-            {% endif %}
+          <img class="bestie-photo" src="{% if bestie.photo %}{{ bestie.photo.url }}{% else %}{% static 'default-profile.png' %}{% endif %}" alt="{{ bestie.username }}">
+          <div class="bestie-details">
             <span class="bestie-name">{{ bestie.full_name|default:bestie.username }}</span>
-          </div>
-          <div class="remove-btn">
-            <form method="post" action="{% url 'remove_bestie' bestie.id %}">
-              {% csrf_token %}
-              <button type="submit">Remove</button>
-            </form>
+            <div class="remove-btn">
+              <form method="post" action="{% url 'remove_bestie' bestie.id %}">
+                {% csrf_token %}
+                <button type="submit">Remove</button>
+              </form>
+            </div>
           </div>
         </li>
       {% endfor %}
     </ul>
   {% else %}
-    <p style="color: white;">You have no besties yet.</p>
+    <p style="color: white; text-align: center;">You have no besties yet.</p>
   {% endif %}
 </div>
-
 {% endblock %}

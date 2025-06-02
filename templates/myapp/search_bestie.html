@@ -1,257 +1,307 @@
 {% extends 'base.html' %}
 {% load static %}
-{% load widget_tweaks %}
-
 {% block content %}
 <style>
-  .search-container {
-    max-width: 700px;
-    margin: 0 auto;
-    padding: 15px;
+  body {
     background-color: #000;
-    border-radius: 10px;
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
   }
 
-  h2, h3 {
-    color: orangered;
+  .container {
+    max-width: 800px;
+    margin: 30px auto;
+    padding: 20px;
+    background-color: #111;
+    border-radius: 16px;
+    box-shadow: 0 0 15px whitesmoke;
+  }
+
+  .tab-nav {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 25px;
+    background-color: #1a1a1a;
+    border-radius: 25px;
+    overflow: hidden;
+    flex-wrap: wrap;
+  }
+
+  .tab-nav a {
+    flex: 1;
+    padding: 10px;
     text-align: center;
-    margin-bottom: 20px;
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    min-width: 33%;
+  }
+
+  .tab-nav a.active {
+    background-color: orangered;
+    color: #fff;
   }
 
   form input[type="text"],
   form button {
-    padding: 10px;
-    font-size: 16px;
-    border-radius: 25px;
-    border: 2px solid black;
-    margin: 10px 0;
     width: 100%;
-    box-sizing: border-box;
+    padding: 10px;
+    border: none;
+    border-radius: 30px;
+    margin-bottom: 15px;
+    font-size: 16px;
+    text-align: center;
   }
 
-  .search-btn {
+  form input[type="text"] {
+    background-color: #fff;
+    color: #000;
+  }
+
+  form button {
     background-color: orangered;
-    color: white;
+    color: #fff;
     font-weight: bold;
-    transition: background-color 0.3s;
+    cursor: pointer;
+    box-shadow: 0 4px 6px black;
   }
 
-  .search-btn:hover {
+  form button:hover {
     background-color: green;
+    color: #fff;
   }
 
-  .result-list {
+  .user-list {
     list-style: none;
     padding: 0;
-    margin-top: 20px;
+    margin: 0;
   }
 
-  .result-item {
-    background: white;
-    color: black;
-    border-radius: 15px;
-    padding: 15px;
-    margin-bottom: 15px;
+  .user-card {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
+    align-items: flex-start;
+    background-color: lightgrey;
+    padding: 15px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 2px black;
+    gap: 16px;
     flex-wrap: wrap;
-    gap: 10px;
   }
 
-  .result-photo img {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
+  .user-left {
+    flex-shrink: 0;
+  }
+
+  .profile-img {
+    width: 160px;
+    height: 160px;
+    border-radius: 16px;
     object-fit: cover;
-    border: 2px solid #ccc;
+    border: 2px solid black;
   }
 
-  .result-name {
+  .user-right {
     flex: 1;
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  .user-info {
     font-weight: bold;
-    color: #007bff;
     font-size: 18px;
-    word-break: break-word;
+    color: #222;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
-  .result-action {
-    text-align: center;
+  .user-action {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
   }
 
-  .result-action button {
-    background-color: orangered;
+  .user-action form {
+    margin: 0;
+  }
+
+  .user-action button {
+    background-color: red;
     color: white;
-    padding: 8px 16px;
-    font-size: 14px;
-    border-radius: 25px;
     border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    box-shadow: 0 1px 2px black;
+    transition: background 0.3s ease;
   }
 
-  .result-action button:hover {
-    background-color: green;
-  }
-
-  .result-action button:disabled {
-    background-color: #999;
+  .user-action button:disabled {
+    background-color: gray;
     cursor: not-allowed;
   }
 
   @media (max-width: 600px) {
-    .result-item {
-      flex-direction: column;
+
+    .container {
+      margin: 15px;
+      padding: 15px;
+    }
+
+    .tab-nav a {
+      font-size: 14px;
+      padding: 8px;
+    }
+
+    .profile-img {
+      width: 200px;
+      height: 200px;
+       border-radius: 16px;
+  object-fit: cover;
+  border: 2px solid black;
+  max-width: 100%;
+    }
+
+    .user-card {
+      flex-direction: row;
       align-items: center;
+      text-align: center;
     }
+    .user-left {
+  flex: 0 0 auto;
+  text-align: center;
+}
 
-    .result-name {
-      margin-top: 10px;
+    .user-info {
+      font-size: 16px;
     }
+    .user-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 15px;
+  min-width: 0;
+}
 
-    .result-action {
-      width: 100%;
-    }
-
-    .result-action form,
-    .result-action button {
-      width: 100%;
+    .user-action {
+      justify-content: center;
     }
   }
 </style>
 
-<div class="search-container">
-  <h2>Search Your Bestie</h2>
+<div class="container">
+  <div class="tab-nav">
+    <a href="?tab=search" class="{% if active_tab == 'search' %}active{% endif %}">Search</a>
+    <a href="?tab=sent" class="{% if active_tab == 'sent' %}active{% endif %}">Sent</a>
+    <a href="?tab=received" class="{% if active_tab == 'received' %}active{% endif %}">Received</a>
+  </div>
 
-  <form method="get" action="{% url 'search_bestie' %}">
-    {{ form.as_p }}
-    <button type="submit" class="search-btn">Search</button>
-  </form>
+  {% if active_tab == 'search' %}
+    <form method="get" action="{% url 'search_bestie' %}">
+      {{ form.as_p }}
+      <input type="hidden" name="tab" value="search">
+      <button type="submit">Search</button>
+    </form>
 
-  {% if results %}
-    <h3>Results:</h3>
-    <ul class="result-list">
-      {% for item in results %}
-        {% with user=item.user %}
-          <li class="result-item">
-            <!-- Profile Image -->
-            <div class="result-photo">
-              {% if user.photo %}
-                <img src="{{ user.photo.url }}" alt="{{ user.username }}">
-              {% else %}
-                <img src="{% static 'default-profile.png' %}" alt="No Photo">
-              {% endif %}
+    {% if results %}
+      <ul class="user-list">
+        {% for item in results %}
+          {% with user=item.user %}
+          <li class="user-card">
+            <div class="user-left">
+              <img class="profile-img" src="{% if user.photo %}{{ user.photo.url }}{% else %}{% static 'default-profile.png' %}{% endif %}" alt="User">
             </div>
-
-            <!-- Name -->
-            <div class="result-name">
-              {{ user.full_name|default:user.username }}
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="result-action">
-              {% if item.is_bestie %}
-                <button disabled>My Bestie</button>
-
-              {% elif item.sent_request %}
-                <form method="post" action="{% url 'cancel_bestie_request' user.id %}" class="cancel-request-form" data-user-id="{{ user.id }}">
-                  {% csrf_token %}
-                  <input type="hidden" name="next" value="{% url 'search_bestie' %}">
-                  <button type="submit">Cancel Bestie</button>
-                </form>
-
-              {% elif item.received_request %}
-                <form method="post" action="{% url 'accept_bestie' user.id %}">
-                  {% csrf_token %}
-                  <input type="hidden" name="next" value="{% url 'search_bestie' %}">
-                  <button type="submit">Accept</button>
-                </form>
-
-              {% else %}
-                <form method="post" action="{% url 'add_bestie' user.id %}" class="add-bestie-form" data-user-id="{{ user.id }}">
-                  {% csrf_token %}
-                  <input type="hidden" name="next" value="{{ request.path }}">
-                  <button type="submit">Add Bestie</button>
-                </form>
-              {% endif %}
+            <div class="user-right">
+              <div class="user-info">{{ user.full_name|default:user.username }}</div>
+              <div class="user-action">
+                {% if item.is_bestie %}
+                  <button disabled>My Bestie</button>
+                {% elif item.sent_request %}
+                  <form method="post" action="{% url 'cancel_bestie_request' user.id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                    <button type="submit">Cancel</button>
+                  </form>
+                {% elif item.received_request %}
+                  <form method="post" action="{% url 'accept_bestie' user.id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                    <button type="submit">Accept</button>
+                  </form>
+                {% else %}
+                  <form method="post" action="{% url 'add_bestie' user.id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                    <button type="submit">Add Bestie</button>
+                  </form>
+                {% endif %}
+              </div>
             </div>
           </li>
-        {% endwith %}
-      {% endfor %}
-    </ul>
-  {% elif form.is_bound %}
-    <p style="color: white;">No results found.</p>
-  {% endif %}
-</div>
+          {% endwith %}
+        {% endfor %}
+      </ul>
+    {% elif form.is_bound %}
+      <p style="color: white;">No results found.</p>
+    {% endif %}
 
-<!-- AJAX Script for Add/Cancel -->
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-  function bindAddBestieButtons() {
-    document.querySelectorAll('.add-bestie-form').forEach(form => {
-      form.addEventListener('submit', function (e) {
-        e.preventDefault();
-        const userId = form.dataset.userId;
-        const formData = new FormData(form);
-        const csrfToken = formData.get('csrfmiddlewaretoken');
-
-        fetch(form.action, {
-          method: 'POST',
-          headers: {
-            'X-CSRFToken': csrfToken,
-            'X-Requested-With': 'XMLHttpRequest',
-          },
-          body: formData,
-        }).then(response => {
-          if (response.ok) {
-            form.outerHTML = `
-              <form method="post" action="/cancel-bestie/${userId}/" class="cancel-request-form" data-user-id="${userId}">
-                <input type="hidden" name="csrfmiddlewaretoken" value="${csrfToken}">
-                <input type="hidden" name="next" value="/search-bestie/">
+  {% elif active_tab == 'sent' %}
+    {% if sent_requests %}
+      <ul class="user-list">
+        {% for req in sent_requests %}
+        <li class="user-card">
+          <div class="user-left">
+            <img class="profile-img" src="{% if req.to_user.photo %}{{ req.to_user.photo.url }}{% else %}{% static 'default-profile.png' %}{% endif %}" alt="User">
+          </div>
+          <div class="user-right">
+            <div class="user-info">{{ req.to_user.full_name|default:req.to_user.username }}</div>
+            <div class="user-action">
+              <form method="post" action="{% url 'cancel_bestie_request' req.to_user.id %}">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.get_full_path }}">
                 <button type="submit">Cancel Request</button>
               </form>
-            `;
-            bindCancelButtons();
-          }
-        });
-      });
-    });
-  }
+            </div>
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p style="color: white;">No sent requests.</p>
+    {% endif %}
 
-  function bindCancelButtons() {
-    document.querySelectorAll('.cancel-request-form').forEach(form => {
-      form.addEventListener('submit', function (e) {
-        e.preventDefault();
-        const userId = form.dataset.userId;
-        const formData = new FormData(form);
-        const csrfToken = formData.get('csrfmiddlewaretoken');
-
-        fetch(form.action, {
-          method: 'POST',
-          headers: {
-            'X-CSRFToken': csrfToken,
-            'X-Requested-With': 'XMLHttpRequest',
-          },
-          body: formData,
-        }).then(response => {
-          if (response.ok) {
-            form.outerHTML = `
-              <form method="post" action="/add-bestie/${userId}/" class="add-bestie-form" data-user-id="${userId}">
-                <input type="hidden" name="csrfmiddlewaretoken" value="${csrfToken}">
-                <input type="hidden" name="next" value="/search-bestie/">
-                <button type="submit">Add Bestie</button>
+  {% elif active_tab == 'received' %}
+    {% if received_requests %}
+      <ul class="user-list">
+        {% for req in received_requests %}
+        <li class="user-card">
+          <div class="user-left">
+            <img class="profile-img" src="{% if req.from_user.photo %}{{ req.from_user.photo.url }}{% else %}{% static 'default-profile.png' %}{% endif %}" alt="User">
+          </div>
+          <div class="user-right">
+            <div class="user-info">{{ req.from_user.full_name|default:req.from_user.username }}</div>
+            <div class="user-action">
+              <form method="post" action="{% url 'accept_bestie' req.from_user.id %}">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                <button type="submit">Accept</button>
               </form>
-            `;
-            bindAddBestieButtons();
-          }
-        });
-      });
-    });
-  }
-
-  bindAddBestieButtons();
-  bindCancelButtons();
-});
-</script>
+            </div>
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p style="color: white;">No received requests.</p>
+    {% endif %}
+  {% endif %}
+</div>
 {% endblock %}

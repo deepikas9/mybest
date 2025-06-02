@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+    .chat-room {
+        height: 90vh;
+        display: flex;
+        flex-direction: column;
+        border: 1px solid #ccc;
+        background: #f1f1f1;
+    }
+    .chat-header {
+        padding: 10px;
+        background: #e60000;
+        color: white;
+        font-weight: bold;
+    }
+    .chat-messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 10px;
+    }
+    .chat-input {
+        display: flex;
+        padding: 10px;
+        background: white;
+    }
+    .chat-input input {
+        flex: 1;
+        padding: 8px;
+        border: 1px solid #ccc;
+    }
+    .chat-input button {
+        padding: 8px 15px;
+        margin-left: 10px;
+        background: #e60000;
+        color: white;
+        border: none;
+    }
+</style>
+
+<div class="chat-room">
+    <div class="chat-header">{{ bestie.username }}</div>
+    <div class="chat-messages">
+        {% for msg in messages %}
+            <div style="text-align: {{ msg.sender == request.user|yesno:"right,left" }};">
+                <strong>{{ msg.sender.username }}</strong>: {{ msg.message }}
+            </div>
+        {% endfor %}
+    </div>
+    <form method="post" class="chat-input">
+        {% csrf_token %}
+        <input type="text" name="message" placeholder="Type a message...">
+        <button type="submit">Send</button>
+    </form>
+</div>
+{% endblock %}

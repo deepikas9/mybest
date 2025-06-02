@@ -5,7 +5,7 @@
 {% block content %}
 <br>
 
-<h2 style="color: orangered; text-align: center;">Edit Your Profile</h2>
+<h2 class="page-title">Edit Your Profile</h2>
 
 <form method="post" class="profile-form">
     {% csrf_token %}
@@ -36,124 +36,129 @@ function enableEdit() {
     fields.forEach(function(id) {
         const field = document.getElementById(id);
         field.disabled = false;
-        field.style.backgroundColor = "white";
-        field.style.color = "black";
+        field.style.backgroundColor = "#fff";
+        field.style.color = "#000";
     });
-    /*document.getElementById("full_name").disabled = false;
-    document.getElementById("dob").disabled = false;
-    document.getElementById("email").disabled = false; */
     document.getElementById("updateBtn").disabled = false;
-
     const editButton = document.getElementById("editBtn");
-    editButton.style.backgroundColor = "blue";
-    editButton.style.color = "whitesmoke";
+    editButton.style.backgroundColor = "#0095f6";
+    editButton.style.color = "#fff";
     editButton.innerText = "EDITING...";
 }
 </script>
 
 <style>
-* {
-    margin: 0;
-    padding: 0;
+body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-color: black;
+}
+.page-title {
+    color: whitesmoke;
+    text-align: center;
+    font-weight: 600;
+    font-size: 1.6rem;
+    margin-bottom: 20px;
+    align-items: center;
 }
 
 .profile-form {
-    max-width: 500px;
+    max-width: 800px;
     margin: auto;
-    padding: 20px;
-    background: black;
-    text-align: center;
-    color: gray;
-    border-radius: 12px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 25px 20px;
+    background:#111;
+    border: 1px solid #dbdbdb;
+    border-radius: 25px;
+    box-shadow: 0 0 15px whitesmoke;
+    align-items: center;
 }
 
 .form-group {
     display: flex;
     flex-direction: column;
-    margin-bottom: 15px;
+    margin-bottom: 18px;
+
+
 }
 
 .form-group label {
-    font-weight: bold;
-    margin-bottom: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: whitesmoke;
+    margin-bottom: 5px;
+    text-align: center;
+
 }
 
 .input-field {
-    width: 100%;
-    max-width: 100%;
-    padding: 5px;
-    border: 2px solid black;
-    font-weight: bold;
-    border-radius: 20px;
+    padding: 5px 12px;
+    border: 1px solid #dbdbdb;
+    border-radius: 25px;
+    border-bottom: 1px solid whitesmoke;
+    font-size: 1rem;
+    background-color: #f1f1f1;
+    color: #262626;
+    transition: all 0.2s ease-in-out;
     text-align: center;
-    color: whitesmoke;
-    background-color: gray;
 }
 
 .input-field:focus {
-    border-color: green;
+    background-color: #fff;
     outline: none;
-    background-color: whitesmoke;
-    color: black;
-    
+
+    border-color: blue;
 }
 
-/* === Button Group (EDIT + UPDATE) === */
 .button-group {
     display: flex;
-    justify-content: space-between;
     gap: 10px;
     margin-top: 20px;
-    flex-wrap: nowrap;
-    border: 2px solid black;
+
+    padding: 5px;
 }
 
 .button-group button {
     flex: 1;
     background-color: orangered;
-    color: whitesmoke;
+    color: white;
     padding: 5px;
+    font-size: 1rem;
+    font-weight: 500;
     border: none;
     border-radius: 25px;
-    font-size: 1rem;
     cursor: pointer;
-    transition: all 0.3s ease;
-    min-width: 90px;
-    border: 2px solid black;
-    
+    transition: background-color 0.3s ease;
 }
 
-
-
-/* === Hover/Disabled Styles === */
-button:hover {
+.button-group button:hover {
     background-color: green;
-    opacity: 0.9;
-    border: 2px solid black;
 }
 
 button:disabled {
-    background-color: orangered;
-    color: lightgrey;
+    background-color: #dbdbdb;
+    color: #999;
     cursor: not-allowed;
-    border: 2px solid black;
 }
 
-/* === Responsive for Small Devices === */
 @media (max-width: 600px) {
+    .profile-form {
+        margin: 10px;
+        padding: 20px 7px;
+    }
+
+    .page-title {
+        font-size: 1.4rem;
+    }
+
     .button-group {
         flex-direction: row;
+        flex-wrap: wrap;
+        gap: 10px;
     }
 
     .button-group button {
-        font-size: 0.9rem;
-    }
-
-    .logout-button button {
-        font-size: 0.95rem;
+        flex: 1 1 48%; /* Ensures buttons share row evenly */
+        min-width: 48.5%;
     }
 }
-
 </style>
 {% endblock %}

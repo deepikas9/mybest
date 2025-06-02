@@ -1,96 +1,95 @@
 {% extends "base.html" %}
+{% load static %}
+{% load widget_tweaks %}
 
-{% block title %}Home{% endblock %}
+{% block title %}Search Bestie{% endblock %}
 
 {% block content %}
 <style>
-  .pending-container {
-    max-width: 700px;
-    margin: 30px auto;
-    padding: 20px;
-    background-color: #000;
-    border-radius: 10px;
-  }
-
-  .pending-container h2 {
-    color: orangered;
-    margin-bottom: 20px;
-  }
-
-  .request-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: white;
-    padding: 15px;
-    margin-bottom: 12px;
-    border-radius: 8px;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-    flex-wrap: wrap;
-  }
-
-  .request-username {
-    font-weight: bold;
-    color: orangered;
-    font-size: 18px;
-    flex: 1;
-    text-align: left;
-  }
-
-  .request-action {
-    flex-shrink: 0;
-  }
-
-  .request-action button {
-    background-color: orangered;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-  }
-
-  @media (max-width: 600px) {
-    .request-item {
-      flex-direction: column;
-      align-items: flex-start;
+    .search-container {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
     }
 
-    .request-action {
-      margin-top: 10px;
-      width: 100%;
+    .search-input {
+        font-size: 16px;
+        padding: 10px;
+        width: 100%;
+        border: 2px solid #e60000;
+        border-radius: 6px;
+        outline: none;
     }
 
-    .request-action button {
-      width: 100%;
+    .search-button {
+        margin-left: 10px;
+        padding: 10px 15px;
+        background-color: #e60000;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
     }
-  }
+
+    .chat-box {
+        background: #ddd;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+
+    .avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 10px;
+        margin-right: 15px;
+        background: #fff;
+        object-fit: cover;
+    }
+
+    .chat-info {
+        flex-grow: 1;
+    }
+
+    .username {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .chat-button {
+        padding: 6px 12px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
 </style>
 
-<div class="pending-container">
-  <h2>Welcome {{ user.full_name }}</h2>
+<form method="get" class="search-container">
+    <input type="text" name="q" placeholder="Search Bestie..." class="search-input" value="{{ request.GET.q }}">
+    <button type="submit" class="search-button">Search</button>
+</form>
 
-  <h2>Pending Bestie Requests</h2>
-
-  {% if received_requests %}
-    <ul>
-      {% for req in received_requests %}
-        <li class="request-item">
-          <div class="request-username">
-            {{ req.from_user.full_name|default:req.from_user.username }}
-          </div>
-          <div class="request-action">
-            <form method="post" action="{% url 'accept_bestie' req.from_user.id %}">
-              {% csrf_token %}
-              <button type="submit">Accept</button>
-            </form>
-          </div>
-        </li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p style="color: white;">No pending requests.</p>
-  {% endif %}
-</div>
+{% if search_results %}
+    {% for bestie in search_results %}
+        <div class="chat-box">
+            {% if bestie.profile_photo %}
+                <img class="avatar" src="{{ bestie.profile_photo.url }}" alt="{{ bestie.username }}">
+            {% else %}
+                <img class="avatar" src="{% static 'default-avatar.png' %}" alt="{{ bestie.username }}">
+            {% endif %}
+            <div class="chat-info">
+                <div class="username">{{ bestie.username }}</div>
+                <form method="get" action="{% url 'chat_view' bestie.id %}">
+                    <button type="submit" class="chat-button">Chat</button>
+                </form>
+            </div>
+        </div>
+    {% endfor %}
+{% elif request.GET.q %}
+    <p>No users found.</p>
+{% endif %}
 {% endblock %}

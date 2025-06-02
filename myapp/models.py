@@ -1,5 +1,5 @@
-from django.db import models
-from django.contrib.auth.models import AbstractUser
+# from django.db import models
+# from django.contrib.auth.models import AbstractUser
 '''
 class CustomUser(AbstractUser):
         full_name = models.CharField(max_length=100, blank=True)
@@ -47,6 +47,8 @@ class BestieRequest(models.Model):
 
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.conf import settings
+from django.utils import timezone
 
 class CustomUser(AbstractUser):
     full_name = models.CharField(max_length=150, blank=True, null=True)
@@ -86,3 +88,13 @@ class BestieRequest(models.Model):
 
     def __str__(self):
         return f"{self.from_user.username} ➝ {self.to_user.username} ({self.status})"
+    
+
+class ChatMessage(models.Model):
+    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='sent_messages')
+    receiver = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='received_messages')
+    message = models.TextField()
+    timestamp = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"{self.sender} -> {self.receiver}: {self.message[:20]}"
