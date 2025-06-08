@@ -154,9 +154,6 @@ def logout_view(request):
 
 
 #----------------------------------------Home -----------------------------------------------
-@login_required
-def home_view(request):
-    return render(request, 'myapp/home.html')
 
 
 @login_required
@@ -358,77 +355,136 @@ def cancel_bestie_request(request, user_id):
 
 
 
-#=================================================================================================================
+
+
+#==========================upto date no need to delete===================
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
-from .models import ChatMessage, CustomUser
+from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
-
-from django.db.models import Q, Value, CharField
-from django.db.models.functions import Concat
-
+from .models import CustomUser, ChatMessage
 
 @login_required
-def chat_list_view(request):
+def home_view(request):
     user = request.user
-    query = request.GET.get('q')
-    besties = user.besties.all()
+    query = request.GET.get('q', '')
 
+    # Get accepted besties
+    besties = user.besties()
     if query:
-        besties = besties.filter(Q(username__icontains=query) | Q(first_name__icontains=query) | Q(last_name__icontains=query))
+        besties = besties.filter(Q(username__icontains=query) | Q(full_name__icontains=query))
 
-    latest_chats = []
+    # Build conversations list
+    conversations = []
     for bestie in besties:
-        last_message = ChatMessage.objects.filter(
-            (Q(sender=user) & Q(receiver=bestie)) |
-            (Q(sender=bestie) & Q(receiver=user))
+        last_msg = ChatMessage.objects.filter(
+            Q(sender=user, receiver=bestie) | Q(sender=bestie, receiver=user)
         ).order_by('-timestamp').first()
-        latest_chats.append((bestie, last_message))
 
-    return render(request, 'chat_list.html', {'latest_chats': latest_chats})
+        conversations.append({
+            'username': bestie.username,
+            'full_name': bestie.full_name or bestie.username,
+            'photo_url': bestie.photo.url if bestie.photo else '/static/images/default.png',
+            'last_message': last_msg.message if last_msg else '',
+            'last_message_time': last_msg.timestamp if last_msg else '',
+        })
 
-from django.http import HttpResponseForbidden
+    return render(request, 'myapp/home.html', {
+        'user': user,
+        'conversations': conversations,
+        'query': query,
+    })
+
+
+# @login_required
+# def chat_view(request, username):
+#     user = request.user
+#     bestie = get_object_or_404(CustomUser, username=username)
+
+#     # Ensure they are besties
+#     if bestie not in user.besties():
+#         return render(request, 'chat_not_allowed.html', {'bestie': bestie})
+
+#     if request.method == 'POST':
+#         message = request.POST.get('message', '').strip()
+#         if message:
+#             ChatMessage.objects.create(sender=user, receiver=bestie, message=message)
+#         return redirect('chat', username=username)
+
+#     messages = ChatMessage.objects.filter(
+#         Q(sender=user, receiver=bestie) | Q(sender=bestie, receiver=user)
+#     ).order_by('timestamp')
+
+#     return render(request, 'myapp/chat.html', {
+#         'user': user,
+#         'bestie': bestie,
+#         'messages': messages,
+#     })
+
+
+'''
+from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import CustomUser, ChatMessage
 
 @login_required
-def chat_view(request, user_id):
-    bestie = get_object_or_404(CustomUser, id=user_id)
+def chat_view(request, username):
+    user = request.user
+    bestie = get_object_or_404(CustomUser, username=username)
 
-    if not BestieRequest.objects.filter(
-        (Q(sender=request.user, receiver=bestie) | Q(sender=bestie, receiver=request.user)),
-        status='accepted'
-    ).exists():
-        return HttpResponseForbidden("You can only chat with your besties.")
+    # Ensure they are besties
+    if bestie not in user.besties():
+        return render(request, 'not_allowed.html')
+
+    if request.method == "POST":
+        message = request.POST.get('message')
+        if message:
+            ChatMessage.objects.create(sender=user, receiver=bestie, message=message)
+        return redirect('chat', username=bestie.username) 
+
+    # All messages between user and bestie
+    # messages = ChatMessage.objects.filter(
+    #     (Q(sender=user) & Q(receiver=bestie)) |
+    #     (Q(sender=bestie) & Q(receiver=user))
+    # ).order_by('timestamp')
 
     messages = ChatMessage.objects.filter(
-        (Q(sender=request.user) & Q(receiver=bestie)) |
-        (Q(sender=bestie) & Q(receiver=request.user))
+        Q(sender=user, receiver=bestie) | Q(sender=bestie, receiver=user)
     ).order_by('timestamp')
 
-    return render(request, 'myapp/chat_room.html', {
+
+    return render(request, 'myapp/chat.html', {
+        'user': user,
         'bestie': bestie,
-        'messages': messages
+        'messages': messages,
     })
 
+'''
+
+from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import get_user_model
+from .models import ChatMessage
+
+User = get_user_model()
 
 @login_required
-def search_bestie_view(request):
-    query = request.GET.get('q')
-    search_results = []
-    if query:
-        try:
-            user_id = int(query)
-        except ValueError:
-            user_id = None
+def chat_view(request, username):
+    bestie = get_object_or_404(User, username=username)
+    user = request.user
 
-        # Search by username, full name (first + last), or ID
-        full_name = Concat('first_name', Value(' '), 'last_name', output_field=CharField())
+    # Combine usernames alphabetically to create room_name
+    room_name = '_'.join(sorted([user.username, bestie.username]))
 
-        search_results = CustomUser.objects.annotate(full_name=full_name).filter(
-            Q(username__icontains=query) |
-            Q(full_name__icontains=query) |
-            Q(id=user_id)
-        ).exclude(id=request.user.id)
+    # Fetch chat messages between both users, ordered by timestamp ascending
+    messages = ChatMessage.objects.filter(
+        sender__in=[user, bestie],
+        receiver__in=[user, bestie]
+    ).order_by('timestamp')
 
-    return render(request, 'search_bestie.html', {
-        'search_results': search_results
-    })
+    context = {
+        'bestie': bestie,
+        'user': user,
+        'messages': messages,
+        'room_name': room_name,
+    }
+    return render(request, 'myapp/chat.html', context)

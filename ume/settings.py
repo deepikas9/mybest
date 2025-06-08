@@ -39,19 +39,20 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
 
     'myapp.middleware.single_session_middleware.OneSessionPerUserMiddleware',  # Your custom middleware
 
     'myapp.middleware.auto_logout.AutoLogoutMiddleware',  # Your custom middleware
 
-    'django.contrib.messages.middleware.MessageMiddleware',
+
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
 ROOT_URLCONF = 'ume.urls'
 AUTH_USER_MODEL = 'myapp.CustomUser'
 
-AUTO_LOGOUT_DELAY = 60 * 15  # 15 minutes
+AUTO_LOGOUT_DELAY = 60*15 # 15 minutes
 SESSION_SAVE_EVERY_REQUEST = True
 
 TEMPLATES = [

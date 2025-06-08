@@ -3,162 +3,195 @@
 {% block title %}Settings{% endblock %}
 
 {% block content %}
-<br>
-
-<h2 class="page-title">Edit Your Profile</h2>
-
-<form method="post" class="profile-form">
-    {% csrf_token %}
-    <div class="form-group">
-        <label for="full_name">Full Name</label>
-        {{ form.full_name|attr:"id:full_name"|attr:"class:input-field"|attr:"disabled:true" }}
-    </div>
-
-    <div class="form-group">
-        <label for="dob">Date of Birth</label>
-        {{ form.date_of_birth|attr:"id:dob"|attr:"class:input-field"|attr:"disabled:true" }}
-    </div>
-
-    <div class="form-group">
-        <label for="email">Email</label>
-        {{ form.email|attr:"id:email"|attr:"class:input-field"|attr:"disabled:true" }}
-    </div>
-
-    <div class="button-group">
-        <button type="button" id="editBtn" onclick="enableEdit()">Edit</button>
-        <button type="submit" id="updateBtn" disabled>Update</button>
-    </div>
-</form>
-
-<script>
-function enableEdit() {
-    const fields = ["full_name", "dob", "email"];
-    fields.forEach(function(id) {
-        const field = document.getElementById(id);
-        field.disabled = false;
-        field.style.backgroundColor = "#fff";
-        field.style.color = "#000";
-    });
-    document.getElementById("updateBtn").disabled = false;
-    const editButton = document.getElementById("editBtn");
-    editButton.style.backgroundColor = "#0095f6";
-    editButton.style.color = "#fff";
-    editButton.innerText = "EDITING...";
-}
-</script>
-
 <style>
-body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    background-color: black;
-}
-.page-title {
-    color: whitesmoke;
+  body {
+    background-color: #000;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    color: white;
+  }
+
+  .profile-container {
+    max-width: 600px;
+    margin: 30px auto;
+    padding: 24px 20px;
+    background-color: #111;
+    border-radius: 24px;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.08);
+  }
+
+  .page-title {
     text-align: center;
-    font-weight: 600;
-    font-size: 1.6rem;
+    font-size: 1.8rem;
+    color: orangered;
+    margin-bottom: 25px;
+  }
+
+  .form-group {
     margin-bottom: 20px;
-    align-items: center;
-}
-
-.profile-form {
-    max-width: 800px;
-    margin: auto;
-    padding: 25px 20px;
-    background:#111;
-    border: 1px solid #dbdbdb;
-    border-radius: 25px;
-    box-shadow: 0 0 15px whitesmoke;
-    align-items: center;
-}
-
-.form-group {
     display: flex;
     flex-direction: column;
-    margin-bottom: 18px;
+  }
 
-
-}
-
-.form-group label {
+  .form-group label {
     font-size: 0.9rem;
-    font-weight: 500;
-    color: whitesmoke;
-    margin-bottom: 5px;
-    text-align: center;
+    margin-bottom: 6px;
+    color: #e0e0e0;
+  }
 
-}
-
-.input-field {
-    padding: 5px 12px;
-    border: 1px solid #dbdbdb;
-    border-radius: 25px;
-    border-bottom: 1px solid whitesmoke;
+  .input-field,
+  input[type="date"] {
+    padding: 12px 16px;
+    border: none;
+    border-radius: 20px;
+    background-color: #222;
+    color: white;
     font-size: 1rem;
-    background-color: #f1f1f1;
-    color: #262626;
-    transition: all 0.2s ease-in-out;
     text-align: center;
-}
+    transition: background-color 0.3s ease, border 0.3s ease;
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.05);
+  }
 
-.input-field:focus {
-    background-color: #fff;
+  .input-field:disabled {
+    background-color: #1a1a1a;
+    color: #aaa;
+  }
+
+  .input-field:focus {
     outline: none;
+    background-color: #333;
+    border: 1px solid #555;
+  }
 
-    border-color: blue;
-}
-
-.button-group {
+  .button-group {
     display: flex;
-    gap: 10px;
-    margin-top: 20px;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 25px;
+  }
 
-    padding: 5px;
-}
-
-.button-group button {
+  .button-group button {
     flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+  }
+
+  #editBtn {
+    background-color: #0095f6;
+    color: white;
+  }
+
+  #updateBtn {
     background-color: orangered;
     color: white;
-    padding: 5px;
-    font-size: 1rem;
-    font-weight: 500;
-    border: none;
-    border-radius: 25px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
+  }
 
-.button-group button:hover {
-    background-color: green;
-}
-
-button:disabled {
-    background-color: #dbdbdb;
-    color: #999;
+  button:disabled {
+    opacity: 0.5;
     cursor: not-allowed;
-}
+  }
 
-@media (max-width: 600px) {
-    .profile-form {
-        margin: 10px;
-        padding: 20px 7px;
+  .messages {
+    margin-top: 20px;
+    list-style: none;
+    padding: 0;
+    color: white;
+  }
+
+  .messages li {
+    padding: 10px 14px;
+    background-color: #2a2a2a;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+  }
+
+  @media (max-width: 600px) {
+    .profile-container {
+      margin: 15px 10px;
+      padding: 20px 16px;
+      border-radius: 0;
+      box-shadow: none;
     }
 
     .page-title {
-        font-size: 1.4rem;
+      font-size: 1.5rem;
+    }
+
+    .input-field {
+      font-size: 0.95rem;
+      padding: 10px 14px;
     }
 
     .button-group {
-        flex-direction: row;
-        flex-wrap: wrap;
-        gap: 10px;
+      flex-direction: column;
     }
 
     .button-group button {
-        flex: 1 1 48%; /* Ensures buttons share row evenly */
-        min-width: 48.5%;
+      width: 100%;
     }
-}
+  }
 </style>
+
+<div class="profile-container">
+  <h2 class="page-title">Edit Your Profile</h2>
+  <form method="post" class="profile-form">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="full_name">Full Name</label>
+      <input type="text" id="full_name" name="full_name" class="input-field" value="{{ form.full_name.value }}" disabled>
+    </div>
+
+    <div class="form-group">
+      <label for="dob">Date of Birth</label>
+      <input type="text" id="dob" name="date_of_birth" class="input-field" value="{{ form.date_of_birth.value|date:'d/m/Y' }}" disabled>
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" class="input-field" value="{{ form.email.value }}" disabled>
+    </div>
+
+    <div class="button-group">
+      <button type="button" id="editBtn" onclick="enableEdit()">Edit</button>
+      <button type="submit" id="updateBtn" disabled>Update</button>
+    </div>
+  </form>
+
+  {% if messages %}
+  <ul class="messages">
+    {% for message in messages %}
+    <li class="{{ message.tags }}">{{ message }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+</div>
+
+<script>
+  function enableEdit() {
+    const fields = ["full_name", "dob", "email"];
+    fields.forEach(function (id) {
+      const field = document.getElementById(id);
+      field.disabled = false;
+
+      if (id === "dob") {
+        const original = field.value;
+        field.type = "date";
+        const parts = original.split("/");
+        if (parts.length === 3) {
+          field.value = `${parts[2]}-${parts[1]}-${parts[0]}`;
+        }
+      }
+    });
+
+    document.getElementById("updateBtn").disabled = false;
+    const editButton = document.getElementById("editBtn");
+    editButton.innerText = "Editing...";
+    editButton.style.opacity = 0.6;
+  }
+</script>
 {% endblock %}

@@ -96,5 +96,8 @@ class ChatMessage(models.Model):
     message = models.TextField()
     timestamp = models.DateTimeField(default=timezone.now)
 
+    class Meta:
+        ordering = ['timestamp']  # Messages in chronological order
+
     def __str__(self):
         return f"{self.sender} -> {self.receiver}: {self.message[:20]}"

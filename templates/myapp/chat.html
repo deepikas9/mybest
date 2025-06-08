@@ -1,0 +1,303 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Chat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="{% static 'images/me-snip.jpg' %}" />
+  <style>
+    /* [Your existing CSS styles remain unchanged] */
+        html, body {
+      margin: 0;
+
+      height: 100%;
+      background: #0d0d0d;
+      color: #fff;
+      font-family: 'Segoe UI', Roboto, sans-serif;
+      overflow: hidden;
+    }
+
+    .chat-container {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .chat-header {
+      background-color: #1f1f1f;
+      padding: 14px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #25D366;
+      text-align: center;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      max-width: 600px;
+      z-index: 10;
+      border-bottom: 1px solid #2e2e2e;
+    }
+
+    .chat-messages {
+      flex: 1;
+      padding: 10px;
+      padding-top: 60px;
+      padding-bottom: 70px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      background: #000;
+    }
+
+    .message {
+      max-width: 75%;
+      padding: 10px 14px;
+      border-radius: 16px;
+      font-size: 0.95rem;
+      line-height: 1.4;
+      word-wrap: break-word;
+      position: relative;
+    }
+
+    .sent {
+      align-self: flex-end;
+      background-color: #0095f6;
+      color: white;
+      border-bottom-right-radius: 0px;
+    }
+
+    .received {
+      align-self: flex-start;
+      background-color:#babcbf;
+      color: black;
+      border-bottom-left-radius: 0px;
+    }
+
+    .timestamp {
+      font-size: 0.6rem;
+      color: #10264a;
+      margin-top: 4px;
+      text-align: right;
+    }
+/* 
+    .chat-input {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      max-width: 600px;
+      background-color: #1f1f1f;
+      padding: 10px 12px;
+      z-index:1001;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      z-index: 10;
+    }
+    
+    .chat-input-wrapper {
+      position: relative;
+      width: 100%;
+    }
+
+    .chat-input textarea {
+    
+      width:100%;
+      border-radius: 25px;
+      border: none;
+      background: #2a2a2a;
+      color: white;
+      padding: 10px 15px;
+      font-size: 1rem;
+      resize: none;
+      min-height: 40px;
+      max-height: 100px;
+      outline: none;
+      box-sizing: border-box;
+    }
+
+    .chat-input button {
+      background: #25D366;
+      border: none;
+      color: white;
+      font-weight: bold;
+      padding: 10px 18px;
+      border-radius: 25px;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+*/
+
+    .chat-input {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      max-width: 600px;
+      background: #111;
+      padding: 10px 12px;
+      
+      z-index: 1001;
+    }
+
+    .chat-input-wrapper {
+      position: relative;
+      width: 100%;
+    }
+
+    .chat-input textarea {
+      width: 100%;
+      min-height: 44px;
+      max-height: 120px;
+      resize: none;
+      padding: 12px 60px 12px 14px;
+      font-size: 1rem;
+      border-radius: 24px;
+      background: #222;
+      border: 1px solid #444;
+      color: white;
+      font-family: inherit;
+      outline: none;
+      box-sizing: border-box;
+    }
+
+    .chat-input button {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: orangered;
+      border: none;
+      color: white;
+      font-weight: bold;
+      padding: 8px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .chat-input button:hover {
+      background-color: #e65100;
+    }
+
+    @media (max-width: 600px) {
+      .chat-header {
+        font-size: 1rem;
+        padding: 12px;
+      }
+
+      .chat-input button {
+        padding: 9px 20px;
+        font-size: 0.85rem;
+      }
+
+      .chat-input textarea {
+        font-size: 0.95rem;
+      }
+    }
+
+  </style>
+</head>
+<body>
+
+<div class="chat-container">
+  <div class="chat-header">
+    <a href="{% url 'home' %}">
+      <img src="{% static 'images/homeicon_white.png' %}" alt="Home" height="25" />
+    </a>
+    {{ bestie.full_name|default:bestie.username }}
+  </div>
+
+  <div class="chat-messages" id="chat-box">
+    {% for msg in messages %}
+      <div class="message {% if msg.sender == user %}sent{% else %}received{% endif %}">
+        {{ msg.message|linebreaksbr }}
+        <div class="timestamp">{{ msg.timestamp|date:"d M Y, H:i" }}</div>
+      </div>
+    {% empty %}
+      <p style="text-align:center; color:#aaa;">No messages yet.</p>
+    {% endfor %}
+  </div>
+
+  <form method="post" class="chat-input">
+    {% csrf_token %}
+    <div class="chat-input-wrapper">
+      <textarea name="message" rows="1" required placeholder="Type a message..."></textarea>
+      <button type="submit">Send</button>
+    </div>
+  </form>
+</div>
+
+<script>
+  const chatBox = document.getElementById('chat-box');
+  chatBox.scrollTop = chatBox.scrollHeight;
+
+  const textarea = document.querySelector('textarea[name="message"]');
+  const form = document.querySelector('form.chat-input');
+  const user = "{{ user.username|escapejs }}";
+  const roomName = "{{ room_name|escapejs }}";
+
+  textarea.addEventListener('input', () => {
+    textarea.style.height = 'auto';
+    textarea.style.height = textarea.scrollHeight + 'px';
+  });
+
+  function createWebSocket() {
+    const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+    return new WebSocket(protocol + window.location.host + '/ws/chat/' + roomName + '/');
+  }
+
+  let socket = createWebSocket();
+
+  socket.onmessage = function(e) {
+    const data = JSON.parse(e.data);
+    const message = data.message;
+    const sender = data.sender;
+
+    const div = document.createElement("div");
+    div.classList.add("message");
+    div.classList.add(sender === user ? "sent" : "received");
+    div.textContent = message;
+
+    const timestamp = document.createElement("div");
+    timestamp.classList.add("timestamp");
+    if (data.timestamp) {
+      const ts = new Date(data.timestamp);
+      timestamp.textContent = ts.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    } else {
+      timestamp.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+    div.appendChild(timestamp);
+
+    chatBox.appendChild(div);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  };
+
+  socket.onclose = function(e) {
+    console.error('Chat socket closed unexpectedly. Attempting to reconnect...');
+    setTimeout(function() {
+      socket = createWebSocket();
+    }, 1000);
+  };
+
+  form.addEventListener("submit", function(e) {
+    e.preventDefault();
+    const message = textarea.value.trim();
+    if (message !== "") {
+      socket.send(JSON.stringify({
+        'message': message,
+        'sender': user,
+        'receiver': "{{ bestie.username|escapejs }}"
+      }));
+      textarea.value = "";
+      textarea.style.height = "44px";
+    }
+  });
+</script>
+
+</body>
+</html>

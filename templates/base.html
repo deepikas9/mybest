@@ -15,29 +15,47 @@
         <img src="{% static 'images/logo1.png' %}" alt="Logo">
     </div>
 
-    <!-- Horizontal Menu -->
+    <!-- Horizontal Menu 
     <div class="horizontal-menu">
         <a href="{% url 'home' %}" title="Home">
-            <img src="{% static 'images/homeicon.png' %}" alt="Home">
+            <img src="{% static 'images/homeicon_white.png' %}" alt="Home">
         </a>
         <a href="{% url 'bestie_list' %}" title="Besties">
-            <img src="{% static 'images/group.png' %}" alt="Group" style="width:100px;">
+            <img src="{% static 'images/group_white.png' %}" alt="Group" style="width:100px;">
         </a>
         <a href="{% url 'search_bestie' %}" title="Add Your Bestie">
-            <img src="{% static 'images/add-user.png' %}" alt="Add User">
+            <img src="{% static 'images/add-user_white.png' %}" alt="Add User">
         </a>
         <a href="{% url 'settings' %}" title="Settings">
-            <img src="{% static 'images/settings.png' %}" alt="Settings">
+            <img src="{% static 'images/settings_white.png' %}" alt="Settings">
         </a>
-    </div>
+    </div> -->
+<div class="horizontal-menu">
+    <a href="{% url 'home' %}" title="Home" id="nav-home"
+       data-default="{% static 'images/homeicon_white.png' %}"
+       data-active="{% static 'images/homeicon.png' %}">
+        <img src="{% static 'images/homeicon_white.png' %}" alt="Home">
+    </a>
+    <a href="{% url 'bestie_list' %}" title="Besties" id="nav-besties"
+       data-default="{% static 'images/group_white.png' %}"
+       data-active="{% static 'images/group.png' %}">
+        <img src="{% static 'images/group_white.png' %}" alt="Group" style="width:100px;">
+    </a>
+    <a href="{% url 'search_bestie' %}" title="Add Your Bestie" id="nav-add"
+       data-default="{% static 'images/add-user_white.png' %}"
+       data-active="{% static 'images/add-user.png' %}">
+        <img src="{% static 'images/add-user_white.png' %}" alt="Add User">
+    </a>
+    <a href="{% url 'settings' %}" title="Settings" id="nav-settings"
+       data-default="{% static 'images/settings_white.png' %}"
+       data-active="{% static 'images/settings.png' %}">
+        <img src="{% static 'images/settings_white.png' %}" alt="Settings">
+    </a>
+</div>
 
-    {% if messages %}
-  <ul class="messages">
-    {% for message in messages %}
-      <li class="{{ message.tags }}">{{ message }}</li>
-    {% endfor %}
-  </ul>
-{% endif %}
+
+    <!-- <hr style="background-color: orangered; height: 4px; border: none;"> 
+ -->
 
     {% block content %}{% endblock %}
 
@@ -45,10 +63,28 @@
         {% csrf_token %}
         <button type="submit" class="logout-button">Logout</button>
     </form>
-
+<!--
     <footer class="footer-fixed">
         <p>&copy; 2025 UME Limited. All rights reserved.</p>
     </footer>
+-->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const menuLinks = document.querySelectorAll(".horizontal-menu a");
+        const currentPath = window.location.pathname;
+
+        menuLinks.forEach(link => {
+            const href = link.getAttribute("href");
+            const img = link.querySelector("img");
+
+            if (currentPath === href || currentPath.startsWith(href)) {
+                img.src = link.getAttribute("data-active");
+            } else {
+                img.src = link.getAttribute("data-default");
+            }
+        });
+    });
+</script>
 
 </body>
 </html>

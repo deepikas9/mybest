@@ -74,7 +74,7 @@ body {
     margin: 40px 10px 80px;
     flex-wrap: wrap;
     gap: 12px;
-    box-shadow: 0 4px 6px whitesmoke;
+    
 }
 
 .logout-button {
@@ -87,7 +87,7 @@ body {
     border-radius: 25px;
     cursor: pointer;
     padding: 5px;
-    box-shadow: 0 4px 6px whitesmoke;
+    
 }
 
 .logout-button:hover {
