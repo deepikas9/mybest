@@ -6,34 +6,53 @@
 }
 
 body {
+<<<<<<< HEAD
     background-color: #000;
     color: whitesmoke;
+=======
+    background-color: whitesmoke;
+>>>>>>> f60ff172e3ca0d3f4aa905511814054a34182f72
     font-family: Arial, sans-serif;
     padding-top: 200px;
 }
 
+<<<<<<< HEAD
 /* Logo Styling */
+=======
+/* Fixed Logo */
+>>>>>>> f60ff172e3ca0d3f4aa905511814054a34182f72
 .logo {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
+<<<<<<< HEAD
     height: 110px;
     background-color: black;
     display: flex;
     justify-content: center;
     align-items: center;
+=======
+    background-color: white;
+    text-align: center;
+>>>>>>> f60ff172e3ca0d3f4aa905511814054a34182f72
     z-index: 1000;
 }
 
 .logo img {
+<<<<<<< HEAD
     height: 120px;
     object-fit: contain;
+=======
+    height: 100px;
+    max-width: 90%;
+>>>>>>> f60ff172e3ca0d3f4aa905511814054a34182f72
 }
 
 /* Horizontal Menu */
 .horizontal-menu {
     position: fixed;
+<<<<<<< HEAD
     top: 110px;
     left: 0;
     width: 100%;
@@ -44,20 +63,39 @@ body {
     gap: 80px;
     padding: 12px 0;
     z-index: 999;
+=======
+    top: 110px; /* Just below logo */
+    left: 0;
+    width: 100%;
+    background-color: white;
+    z-index: 999;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    padding: 10px 20px;
+    flex-wrap: wrap; /* Allows wrapping on smaller screens */
+>>>>>>> f60ff172e3ca0d3f4aa905511814054a34182f72
 }
 
 .horizontal-menu a {
     display: flex;
     align-items: center;
     justify-content: center;
+<<<<<<< HEAD
     padding: 6px;
     border-radius: 8px;
     width: 50px;
     height: 50px;
+=======
+    text-decoration: none;
+>>>>>>> f60ff172e3ca0d3f4aa905511814054a34182f72
     transition: background-color 0.3s ease;
 }
 
 .horizontal-menu a img {
+<<<<<<< HEAD
     height: 70px;
     width: 80px;
     max-width: 100%;
@@ -92,6 +130,37 @@ body {
 
 .logout-button:hover {
     background-color: green;
+=======
+    width: 50px;
+    height: auto;
+}
+
+.horizontal-menu a:hover {
+    background-color: orangered;
+    border-radius: 8px;
+}
+
+/* Logout Form */
+.logout-form {
+    display: flex;
+    justify-content: flex-end;
+    margin: 80px 20px 20px;
+}
+
+.logout-button {
+    background-color: orangered;
+    color: whitesmoke;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.logout-button:hover {
+    background-color: darkorange;
+>>>>>>> f60ff172e3ca0d3f4aa905511814054a34182f72
 }
 
 /* Footer */
@@ -107,6 +176,7 @@ body {
     z-index: 2000;
 }
 
+<<<<<<< HEAD
 /* Responsive Tweaks */
 @media (max-width: 768px) {
     .horizontal-menu {
@@ -122,16 +192,31 @@ body {
         height: 50px;
         width: 50px;
         object-fit: contain;
+=======
+/* Responsive Styling */
+@media (max-width: 768px) {
+    .logo img {
+        height: 80px;
+    }
+
+    .horizontal-menu a img {
+        width: 40px;
+>>>>>>> f60ff172e3ca0d3f4aa905511814054a34182f72
     }
 
     .logout-button {
         font-size: 14px;
+<<<<<<< HEAD
         padding: 5px 16px;
+=======
+        padding: 8px 16px;
+>>>>>>> f60ff172e3ca0d3f4aa905511814054a34182f72
     }
 }
 
 @media (max-width: 480px) {
     .horizontal-menu {
+<<<<<<< HEAD
         gap: 40px;
     }
 
@@ -144,10 +229,21 @@ body {
         height: 28px;
         width: 28px;
         object-fit: contain;
+=======
+        gap: 15px;
+        padding: 10px;
+    }
+
+    .logo img {
+        height: 60px;
+>>>>>>> f60ff172e3ca0d3f4aa905511814054a34182f72
     }
 
     .footer-fixed {
         font-size: 12px;
+<<<<<<< HEAD
         padding: 8px 0;
+=======
+>>>>>>> f60ff172e3ca0d3f4aa905511814054a34182f72
     }
 }
