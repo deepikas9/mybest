@@ -363,36 +363,36 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
 from .models import CustomUser, ChatMessage
 
-@login_required
-def home_view(request):
-    user = request.user
-    query = request.GET.get('q', '')
+# @login_required
+# def home_view(request):
+#     user = request.user
+#     query = request.GET.get('q', '')
 
-    # Get accepted besties
-    besties = user.besties()
-    if query:
-        besties = besties.filter(Q(username__icontains=query) | Q(full_name__icontains=query))
+#     # Get accepted besties
+#     besties = user.besties()
+#     if query:
+#         besties = besties.filter(Q(username__icontains=query) | Q(full_name__icontains=query))
 
-    # Build conversations list
-    conversations = []
-    for bestie in besties:
-        last_msg = ChatMessage.objects.filter(
-            Q(sender=user, receiver=bestie) | Q(sender=bestie, receiver=user)
-        ).order_by('-timestamp').first()
+#     # Build conversations list
+#     conversations = []
+#     for bestie in besties:
+#         last_msg = ChatMessage.objects.filter(
+#             Q(sender=user, receiver=bestie) | Q(sender=bestie, receiver=user)
+#         ).order_by('-timestamp').first()
 
-        conversations.append({
-            'username': bestie.username,
-            'full_name': bestie.full_name or bestie.username,
-            'photo_url': bestie.photo.url if bestie.photo else '/static/images/default.png',
-            'last_message': last_msg.message if last_msg else '',
-            'last_message_time': last_msg.timestamp if last_msg else '',
-        })
+#         conversations.append({
+#             'username': bestie.username,
+#             'full_name': bestie.full_name or bestie.username,
+#             'photo_url': bestie.photo.url if bestie.photo else '/static/images/default.png',
+#             'last_message': last_msg.message if last_msg else '',
+#             'last_message_time': last_msg.timestamp if last_msg else '',
+#         })
 
-    return render(request, 'myapp/home.html', {
-        'user': user,
-        'conversations': conversations,
-        'query': query,
-    })
+#     return render(request, 'myapp/home.html', {
+#         'user': user,
+#         'conversations': conversations,
+#         'query': query,
+#     })
 
 
 # @login_required
@@ -439,7 +439,7 @@ def chat_view(request, username):
         message = request.POST.get('message')
         if message:
             ChatMessage.objects.create(sender=user, receiver=bestie, message=message)
-        return redirect('chat', username=bestie.username) 
+        return redirect('chat', username=bestie.username)
 
     # All messages between user and bestie
     # messages = ChatMessage.objects.filter(
@@ -460,22 +460,49 @@ def chat_view(request, username):
 
 '''
 
-from django.shortcuts import render, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import get_user_model
-from .models import ChatMessage
+# from django.shortcuts import render, get_object_or_404
+# from django.contrib.auth.decorators import login_required
+# from django.contrib.auth import get_user_model
+# from .models import ChatMessage
 
-User = get_user_model()
+# User = get_user_model()
+
+# @login_required
+# def chat_view(request, username):
+#     bestie = get_object_or_404(User, username=username)
+#     user = request.user
+
+#     # Combine usernames alphabetically to create room_name
+#     room_name = '_'.join(sorted([user.username, bestie.username]))
+
+#     # Fetch chat messages between both users, ordered by timestamp ascending
+#     messages = ChatMessage.objects.filter(
+#         sender__in=[user, bestie],
+#         receiver__in=[user, bestie]
+#     ).order_by('timestamp')
+
+#     context = {
+#         'bestie': bestie,
+#         'user': user,
+#         'messages': messages,
+#         'room_name': room_name,
+#     }
+#     return render(request, 'myapp/chat.html', context)
+
+
+from django.shortcuts import render, get_object_or_404
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
+from .models import ChatMessage, CustomUser
+import json
 
 @login_required
 def chat_view(request, username):
-    bestie = get_object_or_404(User, username=username)
+    bestie = get_object_or_404(CustomUser, username=username)
     user = request.user
 
-    # Combine usernames alphabetically to create room_name
-    room_name = '_'.join(sorted([user.username, bestie.username]))
-
-    # Fetch chat messages between both users, ordered by timestamp ascending
+    # Initial messages to render on page load
     messages = ChatMessage.objects.filter(
         sender__in=[user, bestie],
         receiver__in=[user, bestie]
@@ -485,6 +512,352 @@ def chat_view(request, username):
         'bestie': bestie,
         'user': user,
         'messages': messages,
-        'room_name': room_name,
     }
     return render(request, 'myapp/chat.html', context)
+
+
+# @login_required
+# def get_messages(request, receiver_id):
+#     user = request.user
+#     receiver = get_object_or_404(CustomUser, id=receiver_id)
+
+#     messages = ChatMessage.objects.filter(
+#         sender__in=[user, receiver],
+#         receiver__in=[user, receiver]
+#     ).order_by('timestamp')
+
+#     data = {
+#         "messages": [
+#             {
+#                 "sender": msg.sender.username,
+#                 "content": msg.message,
+#                 "timestamp": msg.timestamp.strftime('%d %b %Y, %H:%M')
+#             } for msg in messages
+#         ]
+#     }
+#     return JsonResponse(data)
+
+def get_messages(request, receiver_id):
+    user = request.user
+    receiver = get_object_or_404(CustomUser, id=receiver_id)
+
+    messages = ChatMessage.objects.filter(
+        sender__in=[user, receiver],
+        receiver__in=[user, receiver]
+    ).order_by('timestamp')
+
+    # Mark messages from receiver as read
+    unread = messages.filter(sender=receiver, receiver=user, is_read=False)
+    unread.update(is_read=True)
+
+    data = {
+        "messages": [
+            {
+                "sender": msg.sender.username,
+                "content": msg.message,
+                "timestamp": msg.timestamp.isoformat(),  # for local time formatting
+                "read": msg.is_read
+            } for msg in messages
+        ]
+    }
+    return JsonResponse(data)
+
+@csrf_exempt  # Required for POST from JS when not using Django form
+@login_required
+def send_message(request, receiver_id):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            message_text = data.get('message')
+            receiver = get_object_or_404(CustomUser, id=receiver_id)
+
+            if message_text:
+                ChatMessage.objects.create(
+                    sender=request.user,
+                    receiver=receiver,
+                    message=message_text
+                )
+                return JsonResponse({'status': 'sent'})
+            else:
+                return JsonResponse({'status': 'error', 'message': 'Empty message'}, status=400)
+        except json.JSONDecodeError:
+            return JsonResponse({'status': 'error', 'message': 'Invalid JSON'}, status=400)
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=405)
+
+
+from django.db.models import Q, Count
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from myapp.models import ChatMessage  # Adjust if needed
+
+
+# @login_required
+# def home_view(request):
+#     user = request.user
+#     query = request.GET.get('q', '')
+
+#     besties = user.besties()
+#     if query:
+#         besties = besties.filter(Q(username__icontains=query) | Q(full_name__icontains=query))
+
+#     conversations = []
+#     for bestie in besties:
+#         # Unread messages from bestie to user
+#         last_unread_msg = ChatMessage.objects.filter(
+#             sender=bestie,
+#             receiver=user,
+#             is_read=False
+#         ).order_by('-timestamp').first()
+
+#         if last_unread_msg:
+#             preview_msg = last_unread_msg.message
+#             preview_time = last_unread_msg.timestamp
+#         else:
+#             last_msg = ChatMessage.objects.filter(
+#                 Q(sender=user, receiver=bestie) | Q(sender=bestie, receiver=user)
+#             ).order_by('-timestamp').first()
+#             preview_msg = last_msg.message if last_msg else ''
+#             preview_time = last_msg.timestamp if last_msg else ''
+
+#         unread_count = ChatMessage.objects.filter(
+#             sender=bestie,
+#             receiver=user,
+#             is_read=False
+#         ).count()
+
+#         conversations.append({
+#             'username': bestie.username,
+#             'full_name': bestie.full_name or bestie.username,
+#             'photo_url': bestie.photo.url if bestie.photo else '/static/images/default.png',
+#             'last_message': preview_msg,
+#             'last_message_time': preview_time,
+#             'unread_count': unread_count,
+#         })
+
+#     return render(request, 'myapp/home.html', {
+#         'user': user,
+#         'conversations': conversations,
+#         'query': query,
+#     })
+from django.http import JsonResponse
+from myapp.models import ChatMessage  # Adjust if needed
+
+from django.utils.timezone import now
+from django.utils.timesince import timesince
+
+
+@login_required
+def unread_counts_view(request):
+    user = request.user
+    besties = user.besties()
+
+    unread_counts = {}
+    last_messages = {}
+
+    for bestie in besties:
+        # Unread messages count
+        count = ChatMessage.objects.filter(
+            sender=bestie,
+            receiver=user,
+            is_read=False
+        ).count()
+        unread_counts[bestie.username] = count
+
+        # Get last message between user and bestie (either sender or receiver)
+        last_msg = ChatMessage.objects.filter(
+            Q(sender=user, receiver=bestie) | Q(sender=bestie, receiver=user)
+        ).order_by('-timestamp').first()
+
+        if last_msg:
+            last_messages[bestie.username] = {
+                'message': last_msg.message,
+                'timestamp': last_msg.timestamp.isoformat()
+            }
+        else:
+            last_messages[bestie.username] = {
+                'message': '',
+                'timestamp': ''
+            }
+
+    return JsonResponse({
+        'counts': unread_counts,
+        'last_messages': last_messages
+    })
+
+import datetime
+from django.utils import timezone
+from django.db.models import Q
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from myapp.models import ChatMessage  # adjust if your app name is different
+
+@login_required
+def home_view(request):
+    user = request.user
+    query = request.GET.get('q', '')
+
+    besties = user.besties()
+    if query:
+        besties = besties.filter(Q(username__icontains=query) | Q(full_name__icontains=query))
+
+    conversations = []
+
+    for bestie in besties:
+        # Get the latest unread message from bestie to user
+        last_unread_msg = ChatMessage.objects.filter(
+            sender=bestie,
+            receiver=user,
+            is_read=False
+        ).order_by('-timestamp').first()
+
+        if last_unread_msg:
+            preview_msg = last_unread_msg.message
+            preview_time = last_unread_msg.timestamp
+        else:
+            # Fallback to latest message in either direction
+            last_msg = ChatMessage.objects.filter(
+                Q(sender=user, receiver=bestie) | Q(sender=bestie, receiver=user)
+            ).order_by('-timestamp').first()
+
+            preview_msg = last_msg.message if last_msg else ''
+            preview_time = last_msg.timestamp if last_msg else None
+
+        unread_count = ChatMessage.objects.filter(
+            sender=bestie,
+            receiver=user,
+            is_read=False
+        ).count()
+
+        conversations.append({
+            'username': bestie.username,
+            'full_name': bestie.full_name or bestie.username,
+            'photo_url': bestie.photo.url if bestie.photo else '/static/images/default.png',
+            'last_message': preview_msg,
+            'last_message_time': preview_time,
+            'unread_count': unread_count,
+        })
+
+    # Sort conversations by most recent message timestamp (newest first)
+    conversations.sort(
+        key=lambda c: c['last_message_time'] or timezone.make_aware(datetime.datetime.min),
+        reverse=True
+    )
+
+    return render(request, 'myapp/home.html', {
+        'user': user,
+        'conversations': conversations,
+        'query': query,
+    })
+
+
+
+
+from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
+from django.utils.timesince import timesince
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
+from .models import CustomUser
+import json
+
+# In-memory store (use Redis or cache in production)
+typing_status = {}
+
+@csrf_exempt
+@login_required
+def typing_status_view(request, bestie_id):
+    if request.method == 'POST':
+        body = json.loads(request.body)
+        is_typing = body.get('typing', False)
+        typing_status[(request.user.id, bestie_id)] = is_typing
+        return JsonResponse({'status': 'ok'})
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+
+from django.utils.timesince import timesince
+from django.utils.timezone import localtime
+
+@login_required
+def chat_status(request, bestie_id):
+    bestie = get_object_or_404(CustomUser, id=bestie_id)
+    if bestie not in request.user.besties():
+        return JsonResponse({'error': 'Unauthorized'}, status=403)
+
+    is_online = bestie.is_online()
+    is_typing = typing_status.get((bestie.id, request.user.id), False)
+
+    if bestie.last_seen:
+        time_display = f"last seen {timesince(bestie.last_seen)} ago"
+        time_exact = localtime(bestie.last_seen).strftime("at %I:%M %p").lstrip("0")
+    else:
+        time_display = "Offline"
+        time_exact = None
+
+    return JsonResponse({
+        'is_online': is_online,
+        'typing': is_typing,
+        'last_seen_raw': bestie.last_seen.isoformat() if bestie.last_seen else None
+    })
+
+
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from .models import ChatMessage, CustomUser
+
+@login_required
+def delete_chat(request, user_id):
+    if request.method == 'POST':
+        try:
+            other_user = CustomUser.objects.get(id=user_id)
+            ChatMessage.objects.filter(
+                (Q(sender=request.user) & Q(receiver=other_user)) |
+                (Q(sender=other_user) & Q(receiver=request.user))
+            ).delete()
+            return JsonResponse({'status': 'success'})
+        except CustomUser.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'User not found'}, status=404)
+    return JsonResponse({'status': 'error', 'message': 'Invalid method'}, status=400)
+
+
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from cryptography.hazmat.backends import default_backend
+from base64 import b64decode, b64encode
+from django.conf import settings
+
+def decrypt_message(encrypted_message: str, key: str):
+    # Assuming the message is base64 encoded
+    encrypted_message_bytes = b64decode(encrypted_message)
+
+    # You may want to use a fixed initialization vector (IV) or derive one (this is just a basic example)
+    iv = encrypted_message_bytes[:16]  # Typically, IV is 16 bytes
+    ciphertext = encrypted_message_bytes[16:]
+
+    # Create a cipher using AES
+    cipher = Cipher(algorithms.AES(key.encode('utf-8')), modes.CBC(iv), backend=default_backend())
+    decryptor = cipher.decryptor()
+
+    # Decrypt the message and return the plaintext
+    decrypted_message = decryptor.update(ciphertext) + decryptor.finalize()
+
+    return decrypted_message.decode('utf-8')
+
+# In your Django view, when saving a message:
+def save_message(request, receiver_id):
+    if request.method == 'POST':
+        message = request.POST.get('message')
+
+        # Decrypt the message
+        secret_key = settings.SECRET_KEY  # Ideally, this should be more secure
+        decrypted_message = decrypt_message(message, secret_key)
+
+        # Save the decrypted message in the database
+        new_message = Message(
+            sender=request.user,
+            receiver_id=receiver_id,
+            content=decrypted_message
+        )
+        new_message.save()
+
+        return JsonResponse({'status': 'success'})
+
+

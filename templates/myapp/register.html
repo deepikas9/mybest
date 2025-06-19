@@ -2,7 +2,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>UME Registration</title>
+    <title>UME Registration Page</title>
+    <link rel="icon" type="image/png" href="{% static 'images/ume-logo.png' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/register.css' %}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -66,7 +67,7 @@
 
     <button type="submit" class="button">Register</button>
 </form>
-
+<br><br>
 {% if messages %}
     <ul>
         {% for message in messages %}

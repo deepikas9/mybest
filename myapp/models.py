@@ -1,50 +1,3 @@
-# from django.db import models
-# from django.contrib.auth.models import AbstractUser
-'''
-class CustomUser(AbstractUser):
-        full_name = models.CharField(max_length=100, blank=True)
-        date_of_birth = models.DateField(null=True, blank=True)
-        email = models.EmailField(unique=True)
-        photo = models.ImageField(upload_to='profile_photos/', null=True, blank=True)
-        besties = models.ManyToManyField('self', symmetrical=False, related_name='bestie_of', blank=True)
-        
-
-
-        # Optional: Make email the unique identifier for login
-        #USERNAME_FIELD = 'username'
-        REQUIRED_FIELDS = ['full_name']
-
-        def __str__(self):
-            return self.username
-        
-        class Meta:
-            ordering = ['username']
-            verbose_name = 'User'
-            verbose_name_plural = 'Users'
-
-    # Add any additional fields or methods you need for your user model
-        
-    # GENDER_CHOICES = [
-    #     ('M', 'Male'),
-    #     ('F', 'Female'),
-    #     ('O', 'Other'),
-    # ]
-    # gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
-
-
-class BestieRequest(models.Model):
-    from_user = models.ForeignKey(CustomUser, related_name='sent_bestie_requests', on_delete=models.CASCADE)
-    to_user = models.ForeignKey(CustomUser, related_name='received_bestie_requests', on_delete=models.CASCADE)
-    status = models.CharField(max_length=10, choices=[('pending', 'Pending'), ('accepted', 'Accepted')], default='pending')
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        unique_together = ('from_user', 'to_user')  # prevent duplicate requests
-
-    def __str__(self):
-        return f"{self.from_user} ➝ {self.to_user} ({self.status})"
-'''
-
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.conf import settings
@@ -54,6 +7,7 @@ class CustomUser(AbstractUser):
     full_name = models.CharField(max_length=150, blank=True, null=True)
     date_of_birth = models.DateField(blank=True, null=True)
     photo = models.ImageField(upload_to='profile_photos/', blank=True, null=True)
+    last_seen = models.DateTimeField(null=True, blank=True)
 
     # Note: besties will be accessed via the BestieRequest model
     # You can add a convenience property or method to get accepted besties if you want.
@@ -66,6 +20,11 @@ class CustomUser(AbstractUser):
         received_accepted = BestieRequest.objects.filter(to_user=self, status='accepted').values_list('from_user', flat=True)
         user_ids = set(sent_accepted).union(set(received_accepted))
         return CustomUser.objects.filter(id__in=user_ids)
+    
+    def is_online(self):
+        if self.last_seen:
+            return timezone.now() - self.last_seen < timezone.timedelta(minutes=1)
+        return False
 
     def __str__(self):
         return self.username
@@ -95,9 +54,12 @@ class ChatMessage(models.Model):
     receiver = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='received_messages')
     message = models.TextField()
     timestamp = models.DateTimeField(default=timezone.now)
+    is_read = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['timestamp']  # Messages in chronological order
 
     def __str__(self):
         return f"{self.sender} -> {self.receiver}: {self.message[:20]}"
+    
+

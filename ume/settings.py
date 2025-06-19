@@ -17,17 +17,15 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'myapp',              # Your main app
     'widget_tweaks',
-    'channels',           # Channels for websocket support
+
+
+    'django.contrib.humanize',           # Channels for websocket support
 ]
 
 ASGI_APPLICATION = 'ume.asgi.application'  # Important for Channels (ASGI server)
 
 # For dev, use InMemoryChannelLayer; for production, switch to RedisChannelLayer
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer",
-    },
-}
+
 
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/home/'
@@ -47,6 +45,8 @@ MIDDLEWARE = [
 
 
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'myapp.middleware.last_seen.UpdateLastSeenMiddleware',
+
 ]
 
 ROOT_URLCONF = 'ume.urls'
@@ -99,3 +99,24 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
+# settings.py
+RQ_QUEUES = {
+    'default': {
+        'HOST': 'localhost',
+        'PORT': 6379,
+        'DB': 0,
+        'DEFAULT_TIMEOUT': 360,
+    },
+}
+
+
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_HSTS_SECONDS = 31536000
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True

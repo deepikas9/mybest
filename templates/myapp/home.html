@@ -1,17 +1,17 @@
 {% extends 'base.html' %}
+{% block title %}Home{% endblock %}
 {% load static %}
 
 {% block content %}
 <style>
   * {
-    box-sizing: border-box;
+    /*box-sizing: border-box;*/
   }
 
-  body, html {
+  html, body {
     margin: 0;
-
-    overflow-x: hidden;
-    background: #000;
+    padding-top: 20px;
+    background: black;
     color: #fff;
     font-family: 'Segoe UI', Roboto, sans-serif;
   }
@@ -20,10 +20,17 @@
     width: 100%;
     max-width: 600px;
     margin: 25px auto;
-    padding: 24px 20px;
-    background: #111;
+    background: black;
     border-radius: 24px;
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 24px whitesmoke;
+  }
+
+  .page-title {
+    color: orangered;
+    text-align: center;
+    font-size: 1.6rem;
+    margin-bottom: 20px;
+    text-shadow: 0 0 8px rgba(89, 62, 112, 0.8);
   }
 
   .search-bar {
@@ -36,17 +43,22 @@
     font-size: 1rem;
     border: none;
     border-radius: 24px;
-    background: #222;
+    background: #111;
     color: #eee;
     text-align: center;
     outline: none;
-    box-shadow: 0 0 6px rgba(255, 255, 255, 0.05);
-    transition: background 0.3s ease;
+    box-shadow:
+      inset 0 0 8px rgba(89, 62, 112, 0.15),
+      0 4px 12px rgba(89, 62, 112, 0.4);
+    transition: background 0.3s ease, box-shadow 0.3s ease;
   }
 
   .search-bar input[type="search"]:focus {
     background: #333;
-    border: 1px solid #555;
+    border: 1px solid #593e70;
+    box-shadow:
+      inset 0 0 12px rgba(89, 62, 112, 0.7),
+      0 6px 18px rgba(89, 62, 112, 0.7);
   }
 
   .conversation-list {
@@ -60,15 +72,19 @@
     align-items: center;
     gap: 12px;
     padding: 14px 12px;
-    background: #1a1a1a;
+    background: black;
     margin-bottom: 12px;
-    border-radius: 18px;
+    border-radius: 50px;
     cursor: pointer;
-    transition: background 0.3s ease;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 10px 10px rgba(89, 62, 112, 0.3);
   }
 
-  .conversation-item:hover {
-    background: #2a2a2a;
+  .conversation-item:hover,
+  .conversation-item:focus {
+    background: black;
+    box-shadow: 0 6px 38px rgba(89, 62, 112, 0.6);
+    outline: none;
   }
 
   .conversation-photo {
@@ -78,6 +94,7 @@
     object-fit: cover;
     border: 2px solid #333;
     flex-shrink: 0;
+    box-shadow: 0 0 8px rgba(89, 62, 112, 0.6);
   }
 
   .conversation-details {
@@ -92,43 +109,65 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    text-shadow: 0 0 4px rgba(89, 62, 112, 0.8);
   }
 
-  .conversation-last-message {
+  .conversation-meta {
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
     font-size: 0.9rem;
     color: #aaa;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    margin-top: 2px;
+  }
+
+  .conversation-meta > .message-text {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .unread-badge {
+    background-color: #ff4d4f;
+    color: white;
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: bold;
+    flex-shrink: 0;
+    box-shadow: 0 0 8px rgba(89, 62, 112, 0.9);
   }
 
   .conversation-time {
     font-size: 0.75rem;
     color: #777;
-    margin-left: 8px;
-    white-space: nowrap;
     flex-shrink: 0;
+    text-shadow: 0 0 4px rgba(255, 255, 255, 0.2);
   }
 
   @media (max-width: 600px) {
     .container {
-      margin: 10px 10px;
       padding: 20px 16px;
       border-radius: 0;
       box-shadow: none;
+      background: black;
     }
 
     .conversation-photo {
-      width: 42px;
-      height: 42px;
+      width: 60px;
+      height: 60px;
+      box-shadow: 0 0 10px rgba(89, 62, 112, 0.7);
     }
 
     .conversation-name {
       font-size: 1rem;
+      text-shadow: 0 0 3px rgba(89, 62, 112, 0.7);
     }
 
-    .conversation-last-message {
+    .conversation-meta {
       font-size: 0.85rem;
     }
 
@@ -139,6 +178,11 @@
 </style>
 
 <div class="container">
+  <h2 class="page-title">Besties Convos</h2>
+
+  <!-- 🔊 Notification Sound Audio -->
+  <audio id="notification-sound" src="{% static 'audio/once.mp3' %}" preload="auto"></audio>
+
   <form method="get" class="search-bar" role="search" aria-label="Search conversations">
     <input type="search" name="q" value="{{ query }}" placeholder="Search your Besties" autocomplete="off" />
   </form>
@@ -146,17 +190,28 @@
   {% if conversations %}
     <ul class="conversation-list" role="list">
       {% for convo in conversations %}
-        <li class="conversation-item" role="listitem" tabindex="0" onclick="location.href='{% url 'chat' convo.username %}'" onkeypress="if(event.key === 'Enter') location.href='{% url 'chat' convo.username %}'">
+        <li class="conversation-item" data-username="{{ convo.username }}"
+            tabindex="0"
+            onclick="location.href='{% url 'chat' convo.username %}'"
+            onkeypress="if(event.key === 'Enter') location.href='{% url 'chat' convo.username %}'">
           <img class="conversation-photo" src="{{ convo.photo_url }}" alt="Photo of {{ convo.full_name|default:convo.username }}" />
+
           <div class="conversation-details">
-            <div class="conversation-name">{{ convo.full_name|default:convo.username }}</div>
-            <div class="conversation-last-message">{{ convo.last_message|default:"No messages yet" }}</div>
+            <div class="conversation-name">
+              {{ convo.full_name|default:convo.username }}
+            </div>
+            <div class="conversation-meta" id="meta-{{ convo.username }}">
+              <span class="message-text" id="last-message-{{ convo.username }}">{{ convo.last_message|default:"No messages yet" }}</span>
+              {% if convo.unread_count > 0 %}
+                <span class="unread-badge" id="unread-badge-{{ convo.username }}">{{ convo.unread_count }}</span>
+              {% endif %}
+              {% if convo.last_message_time %}
+                <time class="conversation-time" datetime="{{ convo.last_message_time|date:'c' }}" id="last-message-time-{{ convo.username }}">
+                  {{ convo.last_message_time|date:"d M, H:i" }}
+                </time>
+              {% endif %}
+            </div>
           </div>
-          {% if convo.last_message_time %}
-            <time class="conversation-time" datetime="{{ convo.last_message_time|date:'c' }}" aria-label="Last message at {{ convo.last_message_time|date:'d M Y, H:i' }}">
-              {{ convo.last_message_time|date:"d M Y, H:i" }}
-            </time>
-          {% endif %}
         </li>
       {% endfor %}
     </ul>
@@ -164,4 +219,113 @@
     <p style="text-align:center; color:#999; margin-top:2rem;">No bestie conversations found.</p>
   {% endif %}
 </div>
+
+<script>
+  function fetchConversationUpdates() {
+    fetch("{% url 'unread_counts' %}")
+      .then(response => response.json())
+      .then(data => {
+        const counts = data.counts;
+        const lastMessages = data.last_messages;
+        const audio = document.getElementById("notification-sound");
+
+        const convoList = document.querySelector(".conversation-list");
+        const convoMap = {};
+
+        for (const [username, msgObj] of Object.entries(lastMessages)) {
+          const msgEl = document.getElementById(`last-message-${username}`);
+          const timeEl = document.getElementById(`last-message-time-${username}`);
+          const itemEl = document.querySelector(`[data-username="${username}"]`);
+          const badgeId = `unread-badge-${username}`;
+          let badgeEl = document.getElementById(badgeId);
+          const metaDiv = document.getElementById(`meta-${username}`);
+
+          // Update message text
+          if (msgEl && msgObj.message) {
+            msgEl.textContent = msgObj.message;
+          }
+
+          // Update timestamp
+          let timestamp = null;
+          if (timeEl && msgObj.timestamp) {
+            const time = new Date(msgObj.timestamp);
+            timestamp = time;
+            timeEl.textContent = time.toLocaleString(undefined, {
+              day: '2-digit',
+              month: 'short',
+              hour: '2-digit',
+              minute: '2-digit'
+            });
+            timeEl.setAttribute('datetime', time.toISOString());
+          }
+
+          // Update unread badge and play sound if new
+          const count = counts[username] || 0;
+          if (count > 0) {
+            if (!badgeEl) {
+              const span = document.createElement('span');
+              span.className = 'unread-badge';
+              span.id = badgeId;
+              span.textContent = count;
+              if (metaDiv) {
+                const timeEl = document.getElementById(`last-message-time-${username}`);
+                if (timeEl) {
+                  metaDiv.insertBefore(span, timeEl);
+                } else {
+                  metaDiv.appendChild(span);
+                }
+              }
+
+              // New message, play sound
+              audio.play();
+            } else {
+              const previous = parseInt(badgeEl.textContent || "0");
+              if (count > previous) {
+                audio.play();
+              }
+              badgeEl.textContent = count;
+            }
+          } else if (badgeEl) {
+            badgeEl.remove();
+          }
+
+          // Store for sorting
+          if (itemEl) {
+            convoMap[username] = {
+              el: itemEl,
+              timestamp: timestamp || new Date(0)
+            };
+          }
+        }
+
+        // Sort and reorder conversation list
+        const sortedItems = Object.values(convoMap).sort((a, b) => b.timestamp - a.timestamp);
+        sortedItems.forEach(item => convoList.appendChild(item.el));
+      })
+      .catch(err => {
+        console.error('Error fetching conversation updates:', err);
+      });
+  }
+
+  setInterval(fetchConversationUpdates, 3000);
+  fetchConversationUpdates();
+
+  const searchInput = document.querySelector('input[name="q"]');
+  const conversationItems = document.querySelectorAll('.conversation-item');
+
+  searchInput.addEventListener('input', function () {
+    const query = this.value.trim().toLowerCase();
+
+    conversationItems.forEach(item => {
+      const name = item.querySelector('.conversation-name')?.textContent.toLowerCase() || '';
+      const message = item.querySelector('.message-text')?.textContent.toLowerCase() || '';
+
+      if (name.includes(query) || message.includes(query)) {
+        item.style.display = '';
+      } else {
+        item.style.display = 'none';
+      }
+    });
+  });
+</script>
 {% endblock %}

@@ -1,9 +1,11 @@
 {% extends 'base.html' %}
+{% block title %}Add Your Besties{% endblock %}
 {% load static %}
 
 {% block content %}
 <style>
-  body {
+  html,body {
+      padding-top:20px;
     background-color: #000;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
       Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
@@ -13,20 +15,21 @@
 
   .container {
     max-width: 600px;
-    margin: 30px auto;
-    padding: 24px 20px;
+    margin: 25px auto;
+    padding: 20px 18px;
     background-color: #111;
     border-radius: 20px;
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.15);
+    /* box-shadow: 0 0 15px rgba(255, 255, 255, 0.15); */
+    align-items:center;
   }
 
   h2 {
     text-align: center;
     color: orangered;
-    font-weight: 700;
-    font-size: 28px;
-    margin-bottom: 24px;
-    text-shadow: 0 0 5px orangered;
+    /*font-weight: 700;*/
+    font-size: 1.5rem;
+    margin-bottom: 30px;
+    /* text-shadow: 0 0 5px orangered; */
   }
 
   .tab-nav {
@@ -245,9 +248,10 @@
   }
 </style>
 
-<h2>Know Your Besties</h2>
+
 
 <div class="container">
+    <h2>Know Your Besties</h2>
   <div class="tab-nav">
     <a href="?tab=search" class="{% if active_tab == 'search' %}active{% endif %}">Search</a>
     <a href="?tab=sent" class="{% if active_tab == 'sent' %}active{% endif %}">Sent</a>

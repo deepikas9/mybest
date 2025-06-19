@@ -1,3 +1,132 @@
+/*body {*/
+/*    text-align: center;*/
+/*    font-family: Arial;*/
+/*    color: orangered;*/
+/*    background-color: black;*/
+/*}*/
+/*input, select {*/
+/*    display: block;*/
+/*    margin: 10px auto;*/
+/*    margin-top: 20px;*/
+/*    padding: 5px;*/
+/*    border: 2px solid whitesmoke;*/
+/*    font-weight: bold;*/
+/*    width: 250px;*/
+/*    border-radius: 20px;*/
+/*    text-align: center;*/
+/*}*/
+/*input:hover, select :hover{*/
+/*    display: block;*/
+/*    margin: 10px auto;*/
+/*    padding: 5px;*/
+/*     margin-top: 20px;*/
+/*    border: 2px solid black;*/
+/*    font-weight: bold;*/
+/*    width: 250px;*/
+/*    border-radius: 20px;*/
+/*    text-align: center;*/
+/*}*/
+/*.button {*/
+/*    margin-top:20px;*/
+
+/*    background-color: orangered;*/
+/*    color: whitesmoke;*/
+/*    padding: 5px 20px;*/
+/*    border: none;*/
+/*    width:150px;*/
+/*    cursor: pointer;*/
+/*    font-weight: bold;*/
+/*    border-radius: 15px;*/
+/*}*/
+
+/*.button:hover {*/
+/*    margin-top:20px;*/
+/*    background-color: green;*/
+/*    color: whitesmoke;*/
+/*    border: none;*/
+/*    padding: 5px 20px;*/
+/*    cursor: pointer;*/
+/*    font-weight: bold;*/
+/*    border-radius: 15px;*/
+/*}*/
+/*.link {*/
+/*    margin-top: 40px;*/
+/*    font-size: 14px;*/
+/*    color: orangered;*/
+/*}*/
+/*a{*/
+/*    color:whitesmoke;*/
+/*    text-decoration: none;*/
+/*}*/
+/*a:hover{*/
+/*    color:green;*/
+/*    text-decoration: none;*/
+/*}*/
+
+/*.footer-fixed {*/
+/*    position: fixed;*/
+/*    bottom: 0;*/
+/*    width: 100%;*/
+/*    background-color: orangered;*/
+/*    color: whitesmoke;*/
+/*    text-align: center;*/
+/*    font-size: 10px;*/
+
+
+/*    padding: 10px !important;*/
+/*    height: 12.5px !important;*/
+
+/*}*/
+/*.footer-fixed p {*/
+/*    margin: 0;*/
+/*}*/
+/*.success {*/
+/*    color: green;*/
+/*    font-weight: bold;*/
+/*    margin: 10px 0;*/
+/*}*/
+
+/*.error {*/
+/*    color: whitesmoke;*/
+/*    font-weight: bold;*/
+/*    margin: 10px 0;*/
+/*    margin-top: 20px;*/
+/*}*/
+/*@media (max-width: 600px) {*/
+/*    .button {*/
+/*        width: 90%;*/
+/*        font-size: 0.9rem;*/
+/*    }*/
+
+/*    input, select {*/
+/*        width: 90%;*/
+/*    }*/
+
+/*    .footer-fixed {*/
+/*        font-size: 0.65rem;*/
+/*        padding: 8px;*/
+/*    }*/
+/*}*/
+
+/*
+}
+input, select {
+    width: 80%;
+    max-width: 300px;
+    box-sizing: border-box;
+}
+
+.button {
+    padding: 10px 25px;
+    border-radius: 20px;
+    font-size: 1rem;
+}
+
+.footer-fixed {
+    font-size: 0.75rem;
+    padding: 10px;
+    box-sizing: border-box;
+}*/
 *
 {
     margin:0px;

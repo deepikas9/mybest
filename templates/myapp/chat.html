@@ -4,54 +4,86 @@
 <head>
   <meta charset="UTF-8" />
   <title>Chat</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <link rel="icon" href="{% static 'images/me-snip.jpg' %}" />
   <style>
-    /* [Your existing CSS styles remain unchanged] */
-        html, body {
+    html, body {
       margin: 0;
-
       height: 100%;
       background: #0d0d0d;
       color: #fff;
       font-family: 'Segoe UI', Roboto, sans-serif;
-      overflow: hidden;
+      overflow: auto;
+      padding-bottom: env(safe-area-inset-bottom);
     }
-
+    .ticks {
+      font-size: 0.7rem;
+      color: whitesmoke;
+      float: right;
+      margin-left: 5px;
+    }
+    .read .ticks {
+      color: whitesmoke;
+    }
     .chat-container {
       display: flex;
       flex-direction: column;
       height: 100vh;
       max-width: 600px;
       margin: 0 auto;
+      box-sizing: border-box;
     }
-
     .chat-header {
       background-color: #1f1f1f;
-      padding: 14px;
+      padding: 14px 60px;
       font-size: 1.1rem;
       font-weight: bold;
-      color: #25D366;
-      text-align: center;
+      color: orangered;
       position: fixed;
       top: 0;
       width: 100%;
       max-width: 600px;
       z-index: 10;
       border-bottom: 1px solid #2e2e2e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+    }
+    .chat-header a {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      align-items: center;
+    }
+    .chat-header a img {
+      height: 25px;
+      width: auto;
+    }
+    .chat-header .username {
+      text-align: center;
+    }
+    .chat-header .username div {
+      display: block;
+    }
+    .chat-header .status {
+      font-size: 0.7rem;
+      color: #ccc;
     }
 
     .chat-messages {
       flex: 1;
       padding: 10px;
       padding-top: 60px;
-      padding-bottom: 70px;
+      padding-bottom: 120px;
       overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
       display: flex;
       flex-direction: column;
       gap: 8px;
       background: #000;
+      box-sizing: border-box;
     }
 
     .message {
@@ -73,7 +105,7 @@
 
     .received {
       align-self: flex-start;
-      background-color:#babcbf;
+      background-color: #babcbf;
       color: black;
       border-bottom-left-radius: 0px;
     }
@@ -84,54 +116,6 @@
       margin-top: 4px;
       text-align: right;
     }
-/* 
-    .chat-input {
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      max-width: 600px;
-      background-color: #1f1f1f;
-      padding: 10px 12px;
-      z-index:1001;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-
-      z-index: 10;
-    }
-    
-    .chat-input-wrapper {
-      position: relative;
-      width: 100%;
-    }
-
-    .chat-input textarea {
-    
-      width:100%;
-      border-radius: 25px;
-      border: none;
-      background: #2a2a2a;
-      color: white;
-      padding: 10px 15px;
-      font-size: 1rem;
-      resize: none;
-      min-height: 40px;
-      max-height: 100px;
-      outline: none;
-      box-sizing: border-box;
-    }
-
-    .chat-input button {
-      background: #25D366;
-      border: none;
-      color: white;
-      font-weight: bold;
-      padding: 10px 18px;
-      border-radius: 25px;
-      font-size: 0.9rem;
-      cursor: pointer;
-    }
-*/
 
     .chat-input {
       position: fixed;
@@ -139,9 +123,9 @@
       width: 100%;
       max-width: 600px;
       background: #111;
-      padding: 10px 12px;
-      
+      padding: 8px 10px;
       z-index: 1001;
+      box-sizing:border-box;
     }
 
     .chat-input-wrapper {
@@ -154,40 +138,60 @@
       min-height: 44px;
       max-height: 120px;
       resize: none;
-      padding: 12px 60px 12px 14px;
+      overflow: hidden;
+      padding: 8px 60px 10px 10px;
       font-size: 1rem;
       border-radius: 24px;
       background: #222;
       border: 1px solid #444;
-      color: white;
+      color: whitesmoke;
       font-family: inherit;
       outline: none;
       box-sizing: border-box;
+      overflow-y: auto;
     }
 
-    .chat-input button {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: orangered;
-      border: none;
-      color: white;
-      font-weight: bold;
-      padding: 8px 14px;
-      border-radius: 20px;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
+    /*.chat-input button {*/
+    /*  position: absolute;*/
+    /*  right: 10px;*/
+    /*  top: 50%;*/
+    /*  transform: translateY(-50%);*/
+    /*  background: orangered;*/
+    /*  border: none;*/
+    /*  color: white;*/
+    /*  font-weight: bold;*/
+    /*  padding: 8px 14px;*/
+    /*  border-radius: 20px;*/
+    /*  cursor: pointer;*/
+    /*}*/
+.chat-input button {
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: linear-gradient(to right, orangered, #ff4e00);
+  border: none;
+  color: white;
+  font-weight: bold;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 1rem;
+  box-shadow: 0 4px 10px rgba(255, 69, 0, 0.3);
+  transition: all 0.25s ease;
+}
 
-    .chat-input button:hover {
-      background-color: #e65100;
-    }
+.chat-input button:hover {
+  background: linear-gradient(to right, #ff7043, #ff5722);
+  transform: translateY(-50%) scale(1.05);
+  box-shadow: 0 6px 14px rgba(255, 87, 34, 0.5);
+}
+
 
     @media (max-width: 600px) {
       .chat-header {
         font-size: 1rem;
-        padding: 12px;
+        padding: 12px 50px;
       }
 
       .chat-input button {
@@ -199,24 +203,45 @@
         font-size: 0.95rem;
       }
     }
-
   </style>
 </head>
 <body>
-
 <div class="chat-container">
   <div class="chat-header">
-    <a href="{% url 'home' %}">
-      <img src="{% static 'images/homeicon_white.png' %}" alt="Home" height="25" />
-    </a>
-    {{ bestie.full_name|default:bestie.username }}
+    <a href="{% url 'home' %}"><img src="{% static 'images/homeicon_white.png' %}" alt="Home" /></a>
+    <div class="username">
+      <div>{{ bestie.full_name|default:bestie.username }}</div>
+      <div class="status" id="user-status">
+        {% if is_online %}
+          <span style="color:whitesmoke;">online</span><br>
+          <!-- <span style="font-size:0.65rem;">{{ last_seen_display }}</span> -->
+        {% else %}
+          <span style="font-size:0.75rem;">{{ last_seen_display }}</span>
+        {% endif %}
+      </div>
+      <div style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%);">
+  <button onclick="deleteChat()" title="Delete All Chat" style="
+    background: none;
+    border: none;
+    color: #ff4e00;
+    font-size: 0.9rem;
+    cursor: pointer;
+    font-weight: bold;
+  ">🗑</button>
+</div>
+
+    </div>
   </div>
 
   <div class="chat-messages" id="chat-box">
     {% for msg in messages %}
-      <div class="message {% if msg.sender == user %}sent{% else %}received{% endif %}">
+      <div class="message {% if msg.sender == user %}sent{% else %}received{% endif %}{% if msg.read %} read{% endif %}">
         {{ msg.message|linebreaksbr }}
-        <div class="timestamp">{{ msg.timestamp|date:"d M Y, H:i" }}</div>
+        <div class="timestamp">
+          {% if msg.sender == user %}
+            <span class="ticks">{% if msg.read %}✓✓{% else %}✓{% endif %}</span>
+          {% endif %}
+        </div>
       </div>
     {% empty %}
       <p style="text-align:center; color:#aaa;">No messages yet.</p>
@@ -232,72 +257,211 @@
   </form>
 </div>
 
+<audio id="notify-sound" src="{% static 'audio/online.mp3' %}" preload="auto"></audio>
 <script>
   const chatBox = document.getElementById('chat-box');
-  chatBox.scrollTop = chatBox.scrollHeight;
-
   const textarea = document.querySelector('textarea[name="message"]');
   const form = document.querySelector('form.chat-input');
-  const user = "{{ user.username|escapejs }}";
-  const roomName = "{{ room_name|escapejs }}";
+  const receiverId = "{{ bestie.id }}";
+  const currentUsername = "{{ user.username }}";
+  const messageSound = document.getElementById('notify-sound');
 
-  textarea.addEventListener('input', () => {
-    textarea.style.height = 'auto';
-    textarea.style.height = textarea.scrollHeight + 'px';
-  });
+  let lastMessageTimestamp = null;
+  let lastTypingSent = false;
+  let typingTimer = null;
 
-  function createWebSocket() {
-    const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
-    return new WebSocket(protocol + window.location.host + '/ws/chat/' + roomName + '/');
+  function scrollToBottom() {
+    chatBox.scrollTop = chatBox.scrollHeight;
   }
 
-  let socket = createWebSocket();
+  function formatLocalTime(isoString) {
+    const date = new Date(isoString);
+    return date.toLocaleString(undefined, {
+      day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit'
+    });
+  }
 
-  socket.onmessage = function(e) {
-    const data = JSON.parse(e.data);
-    const message = data.message;
-    const sender = data.sender;
+  function escapeHTML(str) {
+    return str.replace(/[&<>"']/g, tag =>
+      ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[tag])
+    );
+  }
 
+  function appendMessage(msg) {
     const div = document.createElement("div");
     div.classList.add("message");
-    div.classList.add(sender === user ? "sent" : "received");
-    div.textContent = message;
+    div.classList.add(msg.sender === currentUsername ? "sent" : "received");
+    if (msg.read) div.classList.add("read");
 
-    const timestamp = document.createElement("div");
-    timestamp.classList.add("timestamp");
-    if (data.timestamp) {
-      const ts = new Date(data.timestamp);
-      timestamp.textContent = ts.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    } else {
-      timestamp.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    let ticks = '';
+    if (msg.sender === currentUsername) {
+      ticks = msg.read ? '<span class="ticks">✓✓</span>' : '<span class="ticks">✓</span>';
     }
-    div.appendChild(timestamp);
 
+    div.innerHTML = `
+      ${escapeHTML(msg.content).replace(/\n/g, "<br>")}
+      <div class="timestamp">${formatLocalTime(msg.timestamp)} ${ticks}</div>
+    `;
     chatBox.appendChild(div);
-    chatBox.scrollTop = chatBox.scrollHeight;
-  };
+  }
 
-  socket.onclose = function(e) {
-    console.error('Chat socket closed unexpectedly. Attempting to reconnect...');
-    setTimeout(function() {
-      socket = createWebSocket();
-    }, 1000);
-  };
+  function fetchMessages() {
+    fetch(`/chat/get_messages/${receiverId}/`)
+      .then(response => response.json())
+      .then(data => {
+        const newMessages = data.messages || [];
+
+        const filtered = lastMessageTimestamp
+          ? newMessages.filter(msg => new Date(msg.timestamp) > new Date(lastMessageTimestamp))
+          : newMessages;
+
+        if (filtered.length > 0) {
+          const newFromBestie = filtered.filter(msg => msg.sender !== currentUsername);
+          if (newFromBestie.length > 0) messageSound.play();
+
+          filtered.forEach(msg => appendMessage(msg));
+
+          lastMessageTimestamp = newMessages[newMessages.length - 1].timestamp;
+          scrollToBottom();
+        }
+      });
+  }
 
   form.addEventListener("submit", function(e) {
     e.preventDefault();
     const message = textarea.value.trim();
     if (message !== "") {
-      socket.send(JSON.stringify({
-        'message': message,
-        'sender': user,
-        'receiver': "{{ bestie.username|escapejs }}"
-      }));
-      textarea.value = "";
-      textarea.style.height = "44px";
+      fetch(`/chat/send_message/${receiverId}/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: JSON.stringify({ message })
+      }).then(() => {
+        textarea.value = "";
+        textarea.style.height = "44px";
+        fetchMessages();
+      });
     }
   });
+
+  textarea.addEventListener("input", () => {
+    textarea.style.height = 'auto';
+    textarea.style.height = textarea.scrollHeight + 'px';
+    sendTypingStatus(true);
+    clearTimeout(typingTimer);
+    typingTimer = setTimeout(() => sendTypingStatus(false), 3000);
+  });
+
+  textarea.addEventListener("focus", () => {
+    setTimeout(scrollToBottom, 300);
+  });
+
+  textarea.addEventListener("keydown", function(event) {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      form.dispatchEvent(new Event("submit"));
+    }
+  });
+
+  function sendTypingStatus(isTyping) {
+    if (lastTypingSent === isTyping) return;
+
+    fetch(`/chat/typing-status/${receiverId}/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
+      },
+      body: JSON.stringify({ typing: isTyping })
+    });
+
+    lastTypingSent = isTyping;
+  }
+
+  function updateStatus() {
+    fetch(`/chat/chat_status/{{ bestie.id }}/`)
+      .then(res => res.json())
+      .then(data => {
+        const statusEl = document.getElementById("user-status");
+
+        if (data.typing) {
+          statusEl.innerHTML = `<span style="color:whitesmoke;">typing...</span>`;
+          return;
+        }
+
+        if (data.is_online) {
+          statusEl.innerHTML = `<span style="color:whitesmoke;">online</span>`;
+          return;
+        }
+
+        if (data.last_seen_raw) {
+          const seen = new Date(data.last_seen_raw);
+          const now = new Date();
+          const diffMs = now - seen;
+          const diffMin = Math.floor(diffMs / 60000);
+
+          const pad = (n) => (n < 10 ? "0" + n : n);
+          const formatTime = (date) => {
+            const hours = date.getHours();
+            const mins = pad(date.getMinutes());
+            const ampm = hours >= 12 ? 'pm' : 'am';
+            const hour12 = hours % 12 === 0 ? 12 : hours % 12;
+            return `${hour12}:${mins}${ampm}`;
+          };
+
+          const isSameDay = (d1, d2) =>
+            d1.getFullYear() === d2.getFullYear() &&
+            d1.getMonth() === d2.getMonth() &&
+            d1.getDate() === d2.getDate();
+
+          const isYesterday = (d1, d2) => {
+            const yest = new Date(d1);
+            yest.setDate(d1.getDate() - 1);
+            return isSameDay(yest, d2);
+          };
+
+          if (diffMin < 60) {
+            statusEl.innerHTML = `<span style="font-size:0.75rem; color:#aaa;">last seen ${diffMin} minute${diffMin !== 1 ? 's' : ''} ago</span>`;
+          } else if (isSameDay(now, seen)) {
+            statusEl.innerHTML = `<span style="font-size:0.75rem; color:#aaa;">last seen today at ${formatTime(seen)}</span>`;
+          } else if (isYesterday(now, seen)) {
+            statusEl.innerHTML = `<span style="font-size:0.75rem; color:#aaa;">last seen yesterday at ${formatTime(seen)}</span>`;
+          } else {
+            const dateStr = `${pad(seen.getDate())}/${pad(seen.getMonth() + 1)}/${String(seen.getFullYear()).slice(2)}`;
+            statusEl.innerHTML = `<span style="font-size:0.75rem; color:#aaa;">last seen on ${dateStr} ${formatTime(seen)}</span>`;
+          }
+        } else {
+          statusEl.innerHTML = `<span style="color:#aaa; font-size:0.75rem;">offline</span>`;
+        }
+      });
+  }
+
+  function deleteChat() {
+    if (confirm("Are you sure you want to delete the entire chat?")) {
+      fetch(`/chat/delete_chat/${receiverId}/`, {
+        method: "POST",
+        headers: {
+          "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+      }).then(response => {
+        if (response.ok) {
+          chatBox.innerHTML = '<p style="text-align:center; color:#aaa;">No messages yet.</p>';
+          lastMessageTimestamp = null;
+        } else {
+          alert("Failed to delete chat.");
+        }
+      });
+    }
+  }
+
+  setInterval(fetchMessages, 1000);  // Adjusted for better performance
+  setInterval(updateStatus, 3000);
+  fetchMessages();
+  updateStatus();
 </script>
 
 </body>
+
 </html>

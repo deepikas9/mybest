@@ -3,9 +3,12 @@
 {% block title %}My Besties{% endblock %}
 
 {% block content %}
+
 <style>
-  body {
-    background-color: #000;
+  html, body {
+    margin: 0;
+    padding-top: 20px;
+    background-color:black;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
       Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
     color: white;
@@ -13,11 +16,12 @@
 
   .besties-container {
     max-width: 600px;
-    margin: 30px auto;
-    padding: 20px 18px;
-    background-color: #121212;
-    border-radius: 20px;
-    box-shadow: 0 4px 15px rgba(255, 69, 0, 0.3);
+    width: 100%;
+    margin: 25px auto;
+    background: black;
+    border-radius: 24px;
+    box-shadow: 0 8px 24px rgba(89, 62, 112, 0.5);
+    padding: 24px;
   }
 
   h2 {
@@ -27,6 +31,30 @@
     font-weight: 700;
     margin-bottom: 30px;
     letter-spacing: 1.2px;
+    text-shadow: 0 0 8px rgba(89, 62, 112, 0.8);
+  }
+
+  #bestie-search {
+    width: 100%;
+    padding: 12px 20px;
+    border-radius: 24px;
+    border: none;
+    margin-bottom: 20px;
+    font-size: 1rem;
+    background: black;
+    color: #eee;
+    box-shadow:
+      inset 0 0 8px rgba(89, 62, 112, 0.15),
+      0 4px 12px rgba(89, 62, 112, 0.4);
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+    outline: none;
+  }
+  #bestie-search:focus {
+    background: black;
+    border: 1px solid #593e70;
+    box-shadow:
+      inset 0 0 12px rgba(89, 62, 112, 0.7),
+      0 6px 18px rgba(89, 62, 112, 0.7);
   }
 
   .bestie-list {
@@ -38,33 +66,38 @@
   .bestie-item {
     display: flex;
     align-items: center;
-    background-color: #1e1e1e;
-    padding: 14px 18px;
-    margin-bottom: 18px;
-    border-radius: 18px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
-    gap: 16px;
+    background-color: black;
+    padding: 14px 12px;
+    margin-bottom: 12px;
+    border-radius: 50px;
+    gap: 12px;
     flex-wrap: nowrap;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 2px 6px rgba(89, 62, 112, 0.3);
+    cursor: pointer;
   }
 
-  .bestie-item:hover {
-    background-color: #2a2a2a;
+  .bestie-item:hover,
+  .bestie-item:focus {
+    background-color: black;
+    box-shadow: 0 6px 18px rgba(89, 62, 112, 0.6);
+    outline: none;
   }
 
   .bestie-photo {
-    width: 80px;
-    height: 80px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid orangered;
+    border: 2px solid #333;
     flex-shrink: 0;
-    box-shadow: 0 0 8px orangered;
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 0 8px rgba(89, 62, 112, 0.6);
   }
 
   .bestie-photo:hover {
     transform: scale(1.05);
+    box-shadow: 0 0 14px rgba(89, 62, 112, 0.9);
   }
 
   .bestie-details {
@@ -72,17 +105,26 @@
     flex-direction: column;
     justify-content: center;
     flex: 1;
-    color: white;
     gap: 8px;
     overflow: hidden;
   }
 
   .bestie-name {
-    font-size: 20px;
-    font-weight: 700;
+    font-size: 1.05rem;
+    font-weight: 600;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
+    color: #fff;
+    text-shadow: 0 0 4px rgba(89, 62, 112, 0.8);
+  }
+
+  mark {
+    background-color: black !important;
+    color: white !important;
+    border-radius: 4px;
+    padding: 0 2px;
+    box-shadow: 0 0 6px rgba(255, 69, 0, 0.8);
   }
 
   .remove-btn {
@@ -98,55 +140,74 @@
     background-color: orangered;
     color: white;
     border: none;
-    padding: 10px 20px;
+    padding: 6px 12px;
     border-radius: 30px;
     font-size: 14px;
-    font-weight: 700;
+    font-weight: 600;
     cursor: pointer;
-    box-shadow: 0 4px 8px rgba(255, 69, 0, 0.6);
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(89, 62, 112, 0.5);
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
   }
 
   .remove-btn button:hover {
-    background-color: #ff4d00;
+    background-color: green;
     transform: scale(1.05);
+    box-shadow: 0 6px 18px rgba(89, 62, 112, 0.9);
   }
 
   @media (max-width: 600px) {
     .besties-container {
-      margin: 15px 12px;
-      padding: 16px 12px;
+      width: 100%;
+      padding: 20px 12px;
+      border-radius: 0;
+      box-shadow: 0 0 10px rgba(89, 62, 112, 0.7);
+   
+      background: black;
     }
 
     h2 {
-      font-size: 24px;
+      font-size: 1.5rem;
       margin-bottom: 20px;
+      text-shadow: none;
+    }
+
+    #bestie-search {
+      padding: 10px 16px;
     }
 
     .bestie-item {
       flex-direction: row;
-      gap: 12px;
-      padding: 12px 14px;
+      gap: 10px;
+      padding: 12px 10px;
+      box-shadow: 0 0 10px rgba(89, 62, 112, 0.7);
+   
     }
 
     .bestie-photo {
       width: 60px;
       height: 60px;
-      border-width: 1.5px;
+      border: 1px solid #555;
+      box-shadow: 0 0 10px rgba(89, 62, 112, 0.7);
     }
 
     .bestie-name {
-      font-size: 18px;
+      font-size: 1rem;
+      text-shadow: none;
     }
 
     .remove-btn button {
       font-size: 13px;
-      padding: 8px 14px;
+      padding: 5px 10px;
+      margin-top: 5px;
+      box-shadow: none;
+    }
+
+    .remove-btn button:hover {
+      box-shadow: none;
     }
   }
 </style>
-
+<!--
 <div class="besties-container">
   <h2>My Besties</h2>
   {% if besties %}
@@ -176,5 +237,75 @@
       You have no besties yet.
     </p>
   {% endif %}
+</div> -->
+
+<body>
+<div class="besties-container">
+  <!-- Show total besties count statically -->
+  <h2>My Besties&nbsp;#&nbsp;<span id="bestie-total">{{ besties|length }}</span></h2>
+
+  <!-- Search input -->
+  <input type="text" id="bestie-search" placeholder="Search by name or username..." align="center"
+         style="width:100%; padding:8px; border-radius:25px; border:none; margin-bottom: 20px; font-size: 1rem; background:#222; color:white;">
+
+  {% if besties %}
+    <ul class="bestie-list" id="bestie-list">
+      {% for bestie in besties %}
+        <li class="bestie-item" data-name="{{ bestie.full_name|default:bestie.username }}" data-username="{{ bestie.username }}">
+          <img
+            class="bestie-photo"
+            src="{% if bestie.photo %}{{ bestie.photo.url }}{% else %}{% static 'default-profile.png' %}{% endif %}"
+            alt="{{ bestie.username }}"
+            loading="lazy"
+          />
+          <div class="bestie-details">
+            <span class="bestie-name">
+              <span class="name-text">{{ bestie.full_name|default:bestie.username }}</span>
+            </span>
+            <div class="remove-btn">
+              <form method="post" action="{% url 'remove_bestie' bestie.id %}">
+                {% csrf_token %}
+                <button type="submit" aria-label="Remove {{ bestie.username }}">Remove</button>
+              </form>
+            </div>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p style="color: #bbb; text-align: center; font-size: 1.1rem; margin-top: 40px;">
+      You have no besties yet.
+    </p>
+  {% endif %}
 </div>
+<script>
+  const searchInput = document.getElementById("bestie-search");
+  const list = document.getElementById("bestie-list");
+
+  searchInput.addEventListener("input", function () {
+    const searchTerm = this.value.trim().toLowerCase();
+    const items = list.querySelectorAll(".bestie-item");
+
+    items.forEach(item => {
+      const name = item.dataset.name.toLowerCase();
+      const username = item.dataset.username.toLowerCase();
+      const fullText = name || username;
+
+      const nameEl = item.querySelector(".name-text");
+      nameEl.innerHTML = nameEl.textContent; // Reset highlight
+
+      if (fullText.includes(searchTerm)) {
+        item.style.display = "flex";
+
+        // Highlight matched text
+        const regex = new RegExp(`(${searchTerm})`, "gi");
+        nameEl.innerHTML = nameEl.textContent.replace(regex, `<mark style="background-color: orangered; color:white;">$1</mark>`);
+      } else {
+        item.style.display = "none";
+      }
+    });
+  });
+</script>
+
+</body>
 {% endblock %}

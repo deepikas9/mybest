@@ -1,249 +1,170 @@
-/* Global Reset */
+/* Reset */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-body {
-<<<<<<< HEAD
-    background-color: #000;
-    color: whitesmoke;
-=======
-    background-color: whitesmoke;
->>>>>>> f60ff172e3ca0d3f4aa905511814054a34182f72
-    font-family: Arial, sans-serif;
-    padding-top: 200px;
+/* Top Bar */
+.top-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 80px;
+
+  display: flex;
+  border-radius:100px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  z-index: 1000;
+  flex-wrap: nowrap;
 }
 
-<<<<<<< HEAD
-/* Logo Styling */
-=======
-/* Fixed Logo */
->>>>>>> f60ff172e3ca0d3f4aa905511814054a34182f72
-.logo {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-<<<<<<< HEAD
-    height: 110px;
-    background-color: black;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-=======
-    background-color: white;
-    text-align: center;
->>>>>>> f60ff172e3ca0d3f4aa905511814054a34182f72
-    z-index: 1000;
+.top-left-logo img {
+  height: 100px;
+  max-width: 100%;
 }
 
-.logo img {
-<<<<<<< HEAD
-    height: 120px;
-    object-fit: contain;
-=======
-    height: 100px;
-    max-width: 90%;
->>>>>>> f60ff172e3ca0d3f4aa905511814054a34182f72
+.top-search {
+  flex-grow: 1;
+  margin: 0 12px;
+}
+
+.search-box {
+  width: 100%;
+  height: 40px;
+  border-radius: 150px;
+  border: 0.5px solid whitesmoke;
+  padding: 0 15px;
+  font-size: 16px;
+  background: #111;
+  color: white;
+}
+
+/* Circular Profile Icon */
+.top-profile-icon img {
+  width: 100px;
+  height: 100px;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 0.5px solid whitesmoke;
+  box-shadow: 0 0 6px rgba(255, 69, 0, 0.5);
+  transition: transform 0.2s ease-in-out;
+}
+
+.top-profile-icon img:hover {
+  transform: scale(1.05);
 }
 
 /* Horizontal Menu */
 .horizontal-menu {
-    position: fixed;
-<<<<<<< HEAD
-    top: 110px;
-    left: 0;
-    width: 100%;
-    background-color: black;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 80px;
-    padding: 12px 0;
-    z-index: 999;
-=======
-    top: 110px; /* Just below logo */
-    left: 0;
-    width: 100%;
-    background-color: white;
-    z-index: 999;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    gap: 30px;
-    padding: 10px 20px;
-    flex-wrap: wrap; /* Allows wrapping on smaller screens */
->>>>>>> f60ff172e3ca0d3f4aa905511814054a34182f72
-}
-
-.horizontal-menu a {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-<<<<<<< HEAD
-    padding: 6px;
-    border-radius: 8px;
-    width: 50px;
-    height: 50px;
-=======
-    text-decoration: none;
->>>>>>> f60ff172e3ca0d3f4aa905511814054a34182f72
-    transition: background-color 0.3s ease;
+  position: fixed;
+  top: 80px;
+  width: 100%;
+  background: black;
+  display: flex;
+  justify-content: center;
+  gap: 60px;
+  padding: 10px 0;
+  z-index: 999;
 }
 
 .horizontal-menu a img {
-<<<<<<< HEAD
-    height: 70px;
-    width: 80px;
-    max-width: 100%;
-    
-    object-fit: contain;
+  height: 40px;
+  width: 40px;
+  object-fit: contain;
 }
 
+/* Page Content */
+.page-content {
+  padding-top: 160px; /* Push below top-bar + menu */
+  padding-bottom: 60px; /* Space for footer */
+}
 
-
-/* Logout Button */
+/* Logout */
 .logout-form {
-    display: flex;
-    justify-content: center;
-    margin: 40px 10px 80px;
-    flex-wrap: wrap;
-    gap: 12px;
-    
+  text-align: center;
+  margin: 20px 0;
 }
 
 .logout-button {
-    background-color: blue;
-    color: whitesmoke;
-    border: none;
-    width: 25%;
-    
-    font-size: 15px;
-    border-radius: 25px;
-    cursor: pointer;
-    padding: 5px;
-    
+  background: orangered;
+  color: white;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 25px;
+  font-size: 16px;
+  cursor: pointer;
 }
 
 .logout-button:hover {
-    background-color: green;
-=======
-    width: 50px;
-    height: auto;
-}
-
-.horizontal-menu a:hover {
-    background-color: orangered;
-    border-radius: 8px;
-}
-
-/* Logout Form */
-.logout-form {
-    display: flex;
-    justify-content: flex-end;
-    margin: 80px 20px 20px;
-}
-
-.logout-button {
-    background-color: orangered;
-    color: whitesmoke;
-    border: none;
-    padding: 10px 20px;
-    font-size: 16px;
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-}
-
-.logout-button:hover {
-    background-color: darkorange;
->>>>>>> f60ff172e3ca0d3f4aa905511814054a34182f72
+  background: #e14d00;
 }
 
 /* Footer */
 .footer-fixed {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    background: orangered;
-    text-align: center;
-    padding: 10px 0;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background: orangered;
+  text-align: center;
+  padding: 8px 0;
+  font-size: 14px;
+  color: white;
+}
+
+/* Body */
+body {
+  background: #000;
+  color: white;
+  font-family: Arial, sans-serif;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .top-bar {
+    padding: 10px;
+  }
+
+  .top-left-logo img {
+    height: 50px;
+  }
+
+  .search-box {
     font-size: 14px;
-    color: whitesmoke;
-    z-index: 2000;
-}
+    height: 32px;
+  }
 
-<<<<<<< HEAD
-/* Responsive Tweaks */
-@media (max-width: 768px) {
-    .horizontal-menu {
-        gap: 50px;
-    }
+  .top-profile-icon img {
+    width: 50px;
+    height: 50px;
+  }
 
-    .horizontal-menu a {
-        width: 60px;
-        height: 60px;
-    }
+  .horizontal-menu {
+    gap: 30px;
+    flex-wrap: wrap;
+  }
 
-    .horizontal-menu a img {
-        height: 50px;
-        width: 50px;
-        object-fit: contain;
-=======
-/* Responsive Styling */
-@media (max-width: 768px) {
-    .logo img {
-        height: 80px;
-    }
+  .profile-form {
+    border-radius: 0;
+    padding: 20px 15px;
+    box-shadow: none;
+  }
 
-    .horizontal-menu a img {
-        width: 40px;
->>>>>>> f60ff172e3ca0d3f4aa905511814054a34182f72
-    }
+  .page-title {
+    font-size: 1.4rem;
+  }
 
-    .logout-button {
-        font-size: 14px;
-<<<<<<< HEAD
-        padding: 5px 16px;
-=======
-        padding: 8px 16px;
->>>>>>> f60ff172e3ca0d3f4aa905511814054a34182f72
-    }
-}
+  .button-group {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
 
-@media (max-width: 480px) {
-    .horizontal-menu {
-<<<<<<< HEAD
-        gap: 40px;
-    }
-
-    .horizontal-menu a {
-        width: 50px;
-        height: 50px;
-    }
-
-    .horizontal-menu a img {
-        height: 28px;
-        width: 28px;
-        object-fit: contain;
-=======
-        gap: 15px;
-        padding: 10px;
-    }
-
-    .logo img {
-        height: 60px;
->>>>>>> f60ff172e3ca0d3f4aa905511814054a34182f72
-    }
-
-    .footer-fixed {
-        font-size: 12px;
-<<<<<<< HEAD
-        padding: 8px 0;
-=======
->>>>>>> f60ff172e3ca0d3f4aa905511814054a34182f72
-    }
+  .button-group button {
+    width: 48%;
+  }
 }

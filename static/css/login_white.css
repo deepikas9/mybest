@@ -7,7 +7,7 @@ body {
     text-align: center;
     font-family: Arial;
     color: orangered;
-    background-color: black;
+    background-color: #dcdee6;
     padding-bottom: 30px;
 }
 h2{
@@ -19,8 +19,10 @@ h2{
     width: 250px;
     padding: 5px;
     margin: 10px;
-    border: 2px solid black;
+    border: 2px solid orangered;
     font-weight: bold;
+    background-color: #dcdee6;
+    color: orangered;
     border-radius: 20px;
     text-align: center;
 }
@@ -28,8 +30,9 @@ h2{
     width: 250px;
     padding: 5px;
     margin: 10px;
-    border: 2px solid whitesmoke;
+    border: 2px solid green;
     font-weight: bold;
+    color: orangered;
     border-radius: 20px;
     text-align: center;
 }
@@ -37,7 +40,8 @@ h2{
     width: 250px;
     padding: 5px;
     margin: 10px;
-    border: 2px solid orangered;
+    border: 2px solid green;
+    color: orangered;
     font-weight: bold;
     border-radius: 20px;
     text-align: center;
@@ -52,7 +56,7 @@ h2{
     width:150px;
     cursor: pointer;
     border-radius: 15px;
-
+    
 }
 .btn:hover {
     margin-top: 20px;
@@ -63,13 +67,14 @@ h2{
     width:150px;
     cursor: pointer;
     border-radius: 15px;
-
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+    transition: box-shadow 0.3s ease;
 }
 
-a {
-
-    color: whitesmoke;
-    text-decoration: none;
+a { 
+    
+    color: orangered;
+    text-decoration: none; 
 }
 a:hover{
     color:green;
@@ -89,7 +94,7 @@ margin-top: 50px;
 
     padding: 10px !important;
     height: 12.5px !important;
-
+    
 }
 .footer-fixed p {
     margin: 0;
@@ -105,11 +110,15 @@ margin-top: 50px;
 p{
     font-weight: bold;
     margin-top: 20px;
+} 
+p.account
+{
+    color:black;
 }
 
 .messages {
   list-style: none;
-
+  
   margin: 10px 0;
   margin-top: 25px;
 }
