@@ -536,7 +536,7 @@ def chat_view(request, username):
 #         ]
 #     }
 #     return JsonResponse(data)
-
+'''
 def get_messages(request, receiver_id):
     user = request.user
     receiver = get_object_or_404(CustomUser, id=receiver_id)
@@ -562,6 +562,8 @@ def get_messages(request, receiver_id):
     }
     return JsonResponse(data)
 
+
+
 @csrf_exempt  # Required for POST from JS when not using Django form
 @login_required
 def send_message(request, receiver_id):
@@ -583,6 +585,8 @@ def send_message(request, receiver_id):
         except json.JSONDecodeError:
             return JsonResponse({'status': 'error', 'message': 'Invalid JSON'}, status=400)
     return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=405)
+
+'''
 
 
 from django.db.models import Q, Count
@@ -646,43 +650,43 @@ from django.utils.timezone import now
 from django.utils.timesince import timesince
 
 
-@login_required
-def unread_counts_view(request):
-    user = request.user
-    besties = user.besties()
+#@login_required
+# def unread_counts_view(request):
+#     user = request.user
+#     besties = user.besties()
 
-    unread_counts = {}
-    last_messages = {}
+#     unread_counts = {}
+#     last_messages = {}
 
-    for bestie in besties:
-        # Unread messages count
-        count = ChatMessage.objects.filter(
-            sender=bestie,
-            receiver=user,
-            is_read=False
-        ).count()
-        unread_counts[bestie.username] = count
+#     for bestie in besties:
+#         # Unread messages count
+#         count = ChatMessage.objects.filter(
+#             sender=bestie,
+#             receiver=user,
+#             is_read=False
+#         ).count()
+#         unread_counts[bestie.username] = count
 
-        # Get last message between user and bestie (either sender or receiver)
-        last_msg = ChatMessage.objects.filter(
-            Q(sender=user, receiver=bestie) | Q(sender=bestie, receiver=user)
-        ).order_by('-timestamp').first()
+#         # Get last message between user and bestie (either sender or receiver)
+#         last_msg = ChatMessage.objects.filter(
+#             Q(sender=user, receiver=bestie) | Q(sender=bestie, receiver=user)
+#         ).order_by('-timestamp').first()
 
-        if last_msg:
-            last_messages[bestie.username] = {
-                'message': last_msg.message,
-                'timestamp': last_msg.timestamp.isoformat()
-            }
-        else:
-            last_messages[bestie.username] = {
-                'message': '',
-                'timestamp': ''
-            }
+#         if last_msg:
+#             last_messages[bestie.username] = {
+#                 'message': last_msg.message,
+#                 'timestamp': last_msg.timestamp.isoformat()
+#             }
+#         else:
+#             last_messages[bestie.username] = {
+#                 'message': '',
+#                 'timestamp': ''
+#             }
 
-    return JsonResponse({
-        'counts': unread_counts,
-        'last_messages': last_messages
-    })
+#     return JsonResponse({
+#         'counts': unread_counts,
+#         'last_messages': last_messages
+#     })
 
 import datetime
 from django.utils import timezone
@@ -691,64 +695,63 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from myapp.models import ChatMessage  # adjust if your app name is different
 
-@login_required
-def home_view(request):
-    user = request.user
-    query = request.GET.get('q', '')
+#@login_required
+# def home_view(request):
+#     user = request.user
+#     query = request.GET.get('q', '')
 
-    besties = user.besties()
-    if query:
-        besties = besties.filter(Q(username__icontains=query) | Q(full_name__icontains=query))
+#     besties = user.besties()
+#     if query:
+#         besties = besties.filter(Q(username__icontains=query) | Q(full_name__icontains=query))
 
-    conversations = []
+#     conversations = []
 
-    for bestie in besties:
-        # Get the latest unread message from bestie to user
-        last_unread_msg = ChatMessage.objects.filter(
-            sender=bestie,
-            receiver=user,
-            is_read=False
-        ).order_by('-timestamp').first()
+#     for bestie in besties:
+#         # Get the latest unread message from bestie to user
+#         last_unread_msg = ChatMessage.objects.filter(
+#             sender=bestie,
+#             receiver=user,
+#             is_read=False
+#         ).order_by('-timestamp').first()
 
-        if last_unread_msg:
-            preview_msg = last_unread_msg.message
-            preview_time = last_unread_msg.timestamp
-        else:
-            # Fallback to latest message in either direction
-            last_msg = ChatMessage.objects.filter(
-                Q(sender=user, receiver=bestie) | Q(sender=bestie, receiver=user)
-            ).order_by('-timestamp').first()
+#         if last_unread_msg:
+#             preview_msg = last_unread_msg.message
+#             preview_time = last_unread_msg.timestamp
+#         else:
+#             # Fallback to latest message in either direction
+#             last_msg = ChatMessage.objects.filter(
+#                 Q(sender=user, receiver=bestie) | Q(sender=bestie, receiver=user)
+#             ).order_by('-timestamp').first()
 
-            preview_msg = last_msg.message if last_msg else ''
-            preview_time = last_msg.timestamp if last_msg else None
+#             preview_msg = last_msg.message if last_msg else ''
+#             preview_time = last_msg.timestamp if last_msg else None
 
-        unread_count = ChatMessage.objects.filter(
-            sender=bestie,
-            receiver=user,
-            is_read=False
-        ).count()
+#         unread_count = ChatMessage.objects.filter(
+#             sender=bestie,
+#             receiver=user,
+#             is_read=False
+#         ).count()
 
-        conversations.append({
-            'username': bestie.username,
-            'full_name': bestie.full_name or bestie.username,
-            'photo_url': bestie.photo.url if bestie.photo else '/static/images/default.png',
-            'last_message': preview_msg,
-            'last_message_time': preview_time,
-            'unread_count': unread_count,
-        })
+#         conversations.append({
+#             'username': bestie.username,
+#             'full_name': bestie.full_name or bestie.username,
+#             'photo_url': bestie.photo.url if bestie.photo else '/static/images/default.png',
+#             'last_message': preview_msg,
+#             'last_message_time': preview_time,
+#             'unread_count': unread_count,
+#         })
 
-    # Sort conversations by most recent message timestamp (newest first)
-    conversations.sort(
-        key=lambda c: c['last_message_time'] or timezone.make_aware(datetime.datetime.min),
-        reverse=True
-    )
+#     # Sort conversations by most recent message timestamp (newest first)
+#     conversations.sort(
+#         key=lambda c: c['last_message_time'] or timezone.make_aware(datetime.datetime.min),
+#         reverse=True
+#     )
 
-    return render(request, 'myapp/home.html', {
-        'user': user,
-        'conversations': conversations,
-        'query': query,
-    })
-
+#     return render(request, 'myapp/home.html', {
+#         'user': user,
+#         'conversations': conversations,
+#         'query': query,
+#     })
 
 
 
@@ -861,3 +864,177 @@ def save_message(request, receiver_id):
         return JsonResponse({'status': 'success'})
 
 
+
+
+from .utils.encryption import encrypt_message, decrypt_message
+from .utils.encryption import encrypt_message
+
+@csrf_exempt
+@login_required
+def send_message(request, receiver_id):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            message_text = data.get('message')
+            receiver = get_object_or_404(CustomUser, id=receiver_id)
+
+            if message_text:
+                encrypted = encrypt_message(message_text)
+                ChatMessage.objects.create(
+                    sender=request.user,
+                    receiver=receiver,
+                    message=encrypted
+                )
+                return JsonResponse({'status': 'sent'})
+            else:
+                return JsonResponse({'status': 'error', 'message': 'Empty message'}, status=400)
+        except json.JSONDecodeError:
+            return JsonResponse({'status': 'error', 'message': 'Invalid JSON'}, status=400)
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=405)
+
+
+from .utils.encryption import decrypt_message
+
+def get_messages(request, receiver_id):
+    user = request.user
+    receiver = get_object_or_404(CustomUser, id=receiver_id)
+
+    messages = ChatMessage.objects.filter(
+        sender__in=[user, receiver],
+        receiver__in=[user, receiver]
+    ).order_by('timestamp')
+
+    # Mark messages from receiver as read
+    unread = messages.filter(sender=receiver, receiver=user, is_read=False)
+    unread.update(is_read=True)
+    data = {
+        "messages": []
+    }
+
+    for msg in messages:
+        try:
+            decrypted_content = decrypt_message(msg.message)
+        except Exception:
+            decrypted_content = msg.message  # fallback for unencrypted old messages
+
+        data["messages"].append({
+            "sender": msg.sender.username,
+            "content": decrypted_content,
+            "timestamp": msg.timestamp.isoformat(),
+            "read": msg.is_read
+        })
+
+    return JsonResponse(data)
+
+from .utils.encryption import decrypt_message
+from cryptography.fernet import InvalidToken
+
+
+def home_view(request):
+    user = request.user
+    query = request.GET.get('q', '')
+
+    besties = user.besties()
+    if query:
+        besties = besties.filter(Q(username__icontains=query) | Q(full_name__icontains=query))
+
+    conversations = []
+
+    for bestie in besties:
+        # Get the latest unread message from bestie to user
+        last_unread_msg = ChatMessage.objects.filter(
+            sender=bestie,
+            receiver=user,
+            is_read=False
+        ).order_by('-timestamp').first()
+
+        if last_unread_msg:
+            preview_time = last_unread_msg.timestamp
+            try:
+                preview_msg = decrypt_message(last_unread_msg.message)
+            except InvalidToken:
+                preview_msg = last_unread_msg.message
+        else:
+            # Fallback to latest message in either direction
+            last_msg = ChatMessage.objects.filter(
+                Q(sender=user, receiver=bestie) | Q(sender=bestie, receiver=user)
+            ).order_by('-timestamp').first()
+
+            preview_time = last_msg.timestamp if last_msg else None
+            if last_msg:
+                try:
+                    preview_msg = decrypt_message(last_msg.message)
+                except InvalidToken:
+                    preview_msg = last_msg.message
+            else:
+                preview_msg = ''
+
+        unread_count = ChatMessage.objects.filter(
+            sender=bestie,
+            receiver=user,
+            is_read=False
+        ).count()
+
+        conversations.append({
+            'username': bestie.username,
+            'full_name': bestie.full_name or bestie.username,
+            'photo_url': bestie.photo.url if bestie.photo else '/static/images/default.png',
+            'last_message': preview_msg,
+            'last_message_time': preview_time,
+            'unread_count': unread_count,
+        })
+
+    # Sort conversations by most recent message timestamp (newest first)
+    conversations.sort(
+        key=lambda c: c['last_message_time'] or timezone.make_aware(datetime.datetime.min),
+        reverse=True
+    )
+
+    return render(request, 'myapp/home.html', {
+        'user': user,
+        'conversations': conversations,
+        'query': query,
+    })
+
+
+def unread_counts_view(request):
+    user = request.user
+    besties = user.besties()
+
+    unread_counts = {}
+    last_messages = {}
+
+    for bestie in besties:
+        # Unread messages count
+        count = ChatMessage.objects.filter(
+            sender=bestie,
+            receiver=user,
+            is_read=False
+        ).count()
+        unread_counts[bestie.username] = count
+
+        # Get last message between user and bestie
+        last_msg = ChatMessage.objects.filter(
+            Q(sender=user, receiver=bestie) | Q(sender=bestie, receiver=user)
+        ).order_by('-timestamp').first()
+
+        if last_msg:
+            try:
+                decrypted = decrypt_message(last_msg.message)
+            except InvalidToken:
+                decrypted = last_msg.message  # fallback if not encrypted
+
+            last_messages[bestie.username] = {
+                'message': decrypted,
+                'timestamp': last_msg.timestamp.isoformat()
+            }
+        else:
+            last_messages[bestie.username] = {
+                'message': '',
+                'timestamp': ''
+            }
+
+    return JsonResponse({
+        'counts': unread_counts,
+        'last_messages': last_messages
+    })
