@@ -6,6 +6,7 @@ SECRET_KEY = 'django-insecure-klsr7pf+skru8=0)^&w2bsbt*$!mcueivkqnwlsktid!ynoe%g
 
 DEBUG = True
 
+#ALLOWED_HOSTS = ['deepika9.pythonanywhere.com']
 ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
@@ -37,17 +38,21 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+
+    # ✅ AjaxLoginRequiredMiddleware must come immediately after AuthenticationMiddleware
+    'myapp.middleware.ajax_login.AjaxLoginRequiredMiddleware',
+
+    # ✅ Place message middleware before your custom middlewares
     'django.contrib.messages.middleware.MessageMiddleware',
 
-    'myapp.middleware.single_session_middleware.OneSessionPerUserMiddleware',  # Your custom middleware
-
-    'myapp.middleware.auto_logout.AutoLogoutMiddleware',  # Your custom middleware
-
-
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # ✅ Your custom middlewares
+    'myapp.middleware.single_session_middleware.OneSessionPerUserMiddleware',
+    'myapp.middleware.auto_logout.AutoLogoutMiddleware',
     'myapp.middleware.last_seen.UpdateLastSeenMiddleware',
 
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
 
 ROOT_URLCONF = 'ume.urls'
 AUTH_USER_MODEL = 'myapp.CustomUser'
@@ -81,10 +86,16 @@ DATABASES = {
 }
 
 AUTH_PASSWORD_VALIDATORS = [
-    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',},
-    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',},
-    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',},
-    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',},
+    # {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',},
+    # {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',},
+    # {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',},
+    # {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',},
+     {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 6,   # total length (you can keep 8 or more)
+        }
+    }
 ]
 
 LANGUAGE_CODE = 'en-us'
@@ -122,5 +133,7 @@ SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
 
 
+
 import base64
 ENCRYPTION_KEY = b'iFlK0xmbGzob7j92oVEd8Xr-RGxVxp3zcpsrQ61yoww='
+

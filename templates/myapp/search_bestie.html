@@ -4,9 +4,9 @@
 
 {% block content %}
 <style>
-  html,body {
-      padding-top:20px;
-    background-color: #000;
+  html, body {
+    padding-top: 20px;
+    background-color: black;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
       Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
     margin: 0;
@@ -17,186 +17,172 @@
     max-width: 600px;
     margin: 25px auto;
     padding: 20px 18px;
-    background-color: #111;
+    padding-top: 70px;
+    background-color:black;
     border-radius: 20px;
-    /* box-shadow: 0 0 15px rgba(255, 255, 255, 0.15); */
-    align-items:center;
   }
 
   h2 {
     text-align: center;
     color: orangered;
-    /*font-weight: 700;*/
     font-size: 1.5rem;
     margin-bottom: 30px;
-    /* text-shadow: 0 0 5px orangered; */
   }
 
   .tab-nav {
     display: flex;
     justify-content: space-around;
-    background-color: #222;
+    background-color: black;
+    color:white;
     border-radius: 30px;
     overflow: hidden;
     margin-bottom: 28px;
-    box-shadow: inset 0 0 10px rgba(255, 69, 0, 0.3);
+    box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.5);
   }
 
   .tab-nav a {
     flex: 1;
-    padding: 14px 0;
+    padding: 10px;
     text-align: center;
     text-decoration: none;
     color: #ddd;
     font-weight: 700;
-    font-size: 1rem;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    user-select: none;
+    font-size: 0.9rem;
   }
 
   .tab-nav a.active {
-    background: linear-gradient(135deg, #ff4500, #ff6a00);
-    color: white;
-    box-shadow: 0 0 10px orangered;
+    background: linear-gradient(135deg, #E5DED4, #E5DED4);
+    color: orangered;
+    box-shadow: 0 0 10px whitesmoke;
   }
 
-  form input[type="text"],
-  form button {
+  form input[type="text"]
+   {
     width: 100%;
-    padding: 14px 18px;
-    margin-bottom: 16px;
-    font-size: 1rem;
-    border-radius: 30px;
+    padding: 10px;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    border-radius: 24px;
     border: none;
     text-align: center;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
-    transition: box-shadow 0.3s ease;
-    background-color: #222;
-    color: #fff;
-    font-weight: 600;
+    background-color: black;
+    color: #eee;
+    outline:none;
+    border: 0.3px solid whitesmoke;
+    /*box-shadow:*/
+    /*  inset 0 0 12px rgba(255, 255, 255, 0.5),*/
+    /*  0 6px 18px rgba(255, 255, 255, 0.5);*/
   }
+  form button
+  {
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    font-size: 0.7rem;
+    border-radius: 24px;
+    border: none;
 
-  form input[type="text"]:focus {
-    outline: none;
-    box-shadow: 0 0 12px orangered;
-    background-color: #2a2a2a;
+    text-align: center;
+    background-color: #222;
+    color: #eee;
+    outline:none;
+
   }
+        form input[type="text"]:hover, form input[type="text"]:focus {
+    background: #111;
+    border: 1px solid #593e70;
+    box-shadow:
+      inset 0 0 12px rgba(89, 62, 112, 0.7),
+      0 6px 18px rgba(89, 62, 112, 0.7);
+}
 
   form button {
     background: linear-gradient(135deg, #ff4500, #ff6a00);
-    color: white;
-    font-weight: 700;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(255, 69, 0, 0.6);
-    transition: background 0.3s ease, box-shadow 0.3s ease;
-  }
-
-  form button:hover:not(:disabled) {
-    background: linear-gradient(135deg, #00a000, #00d000);
-    box-shadow: 0 4px 14px rgba(0, 200, 0, 0.7);
-  }
-
-  form button:disabled {
-    background: #008000;
-    cursor: not-allowed;
-    box-shadow: none;
   }
 
   .user-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  .user-card {
-    display: flex;
-    align-items: center;
-    background-color: #1a1a1a;
-    padding: 16px;
-    border-radius: 20px;
-    margin-bottom: 18px;
-    box-shadow: 0 2px 8px rgba(255, 69, 0, 0.15);
-    gap: 16px;
-    transition: background-color 0.3s ease;
-  }
-
-  .user-card:hover {
-    background-color: #2c2c2c;
-  }
-
-  .profile-img {
-    width: 64px;
-    height: 64px;
-    border-radius: 18px;
-    object-fit: cover;
-    border: 2px solid #444;
-    flex-shrink: 0;
-    box-shadow: 0 0 8px rgba(255, 69, 0, 0.4);
-  }
-
-  .user-right {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .user-info {
-    font-weight: 700;
-    font-size: 1.1rem;
-    color: #eee;
-    text-shadow: 0 0 3px rgba(255, 69, 0, 0.7);
-  }
-
-  .user-action {
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
+    list-style: none;
+    padding: 0;
+    gap:16px;
+
+  }
+
+  .suggestion-card {
+    background-color: #222;
+    border-radius: 16px;
+    width: 160px; /* Ensures 2 items per row with gap */
+    box-sizing: border-box;
+
+    padding: 16px 12px;
+    text-align: center;
+/*    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.05);
+     box-shadow: 0 4px 12px rgba(251, 248, 248, 0.05); */
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
+    cursor: pointer;
+  }
+     .suggestion-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0px 20px rgba(243, 244, 244, 0.3);
+
+  }
+
+  .suggestion-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     gap: 12px;
   }
 
-  .user-action form {
-    margin: 0;
+  .suggestion-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #444;
   }
 
-  .user-action button {
-    background: linear-gradient(135deg, #ff4500, #ff6a00);
+  .suggestion-text {
+    flex-grow: 1;
+  }
+
+  .suggestion-username {
+    font-weight: 600;
+    color: #aaa;
+    font-size: 0.7rem;
+  }
+
+  .suggestion-fullname {
+    font-size: 0.9rem;
+    color: #fff;
+  }
+
+  .suggestion-action button,
+  .suggestion-action form button {
+    background: linear-gradient(135deg, #f44d06, #fe5f10);
     color: white;
     border: none;
-    padding: 10px 18px;
-    border-radius: 24px;
-    font-size: 0.95rem;
-    font-weight: 700;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
     cursor: pointer;
-    box-shadow: 0 3px 10px rgba(255, 69, 0, 0.4);
-    transition: background 0.3s ease, box-shadow 0.3s ease;
+    /* box-shadow: 0 4px 12px rgba(255, 69, 0, 0.4); */
+    /* box-shadow: 0 2px 6px rgba(50, 100, 255, 0.4); */
   }
 
-  .user-action button:hover:not(:disabled) {
-    background: linear-gradient(135deg, #00a000, #00d000);
-    box-shadow: 0 4px 14px rgba(0, 200, 0, 0.6);
+  .suggestion-action button:hover {
+    background: linear-gradient(135deg, #00a000, #00c000);
   }
 
-  .user-action button:disabled {
-    background: #008000;
-    cursor: not-allowed;
+  .suggestion-action .disabled-btn {
+    background: blue;
+    color: whitesmoke;
+    cursor: default;
     box-shadow: none;
-  }
-
-  .messages {
-    margin-top: 30px;
-    list-style: none;
-    padding: 0;
-  }
-
-  .messages li {
-    padding: 12px 16px;
-    border-radius: 12px;
-    margin-bottom: 12px;
-    font-size: 1rem;
-    color: #eee;
-    background-color: #2b2b2b;
-    box-shadow: 0 0 8px rgba(255, 255, 255, 0.05);
-    user-select: text;
   }
 
   @media (max-width: 600px) {
@@ -204,54 +190,22 @@
       border-radius: 0;
       padding: 18px 14px;
       margin: 0;
-      box-shadow: none;
     }
-
-    .tab-nav a {
-      font-size: 14px;
-      padding: 12px 0;
+    .suggestion-avatar {
+      width: 100px;
+      height: 100px;
     }
-
-    .profile-img {
-      width: 48px;
-      height: 48px;
-      border-radius: 14px;
+    .suggestion-action button {
+      padding: 7px 14px;
     }
-
-    .user-card {
-      flex-direction: row;
-      padding: 12px 10px;
-      gap: 12px;
-    }
-
-    .user-info {
-      font-size: 1rem;
-    }
-
-    .user-action {
-      justify-content: flex-start;
-      gap: 10px;
-    }
-
-    form input[type="text"],
-    form button {
-      padding: 12px 14px;
-      font-size: 0.95rem;
-      border-radius: 20px;
-    }
-
-    .user-action button {
-      padding: 8px 14px;
-      font-size: 0.9rem;
-      border-radius: 20px;
-    }
+      .suggestion-card {
+    width: 46%;
+  }
   }
 </style>
 
-
-
 <div class="container">
-    <h2>Know Your Besties</h2>
+  <h2>Know Your Besties</h2>
   <div class="tab-nav">
     <a href="?tab=search" class="{% if active_tab == 'search' %}active{% endif %}">Search</a>
     <a href="?tab=sent" class="{% if active_tab == 'sent' %}active{% endif %}">Sent</a>
@@ -269,13 +223,17 @@
       <ul class="user-list">
         {% for item in results %}
           {% with user=item.user %}
-          <li class="user-card">
-            <img class="profile-img" src="{% if user.photo %}{{ user.photo.url }}{% else %}{% static 'default-profile.png' %}{% endif %}" alt="User Photo">
-            <div class="user-right">
-              <div class="user-info">{{ user.full_name|default:user.username }}</div>
-              <div class="user-action">
+          <li class="suggestion-card">
+            <div class="suggestion-header">
+              <img class="suggestion-avatar" src="{% if user.photo %}{{ user.photo.url }}{% else %}{% static 'default-profile.png' %}{% endif %}" alt="User Photo">
+              <div class="suggestion-text">
+                <div class="suggestion-fullname">{{ user.full_name }}</div>
+                <div class="suggestion-username">{{ user.username }}</div>
+
+              </div>
+              <div class="suggestion-action">
                 {% if item.is_bestie %}
-                  <button disabled>My Bestie</button>
+                  <button class="disabled-btn" disabled>My Bestie</button>
                 {% elif item.sent_request %}
                   <form method="post" action="{% url 'cancel_bestie_request' user.id %}">
                     {% csrf_token %}
@@ -309,15 +267,19 @@
     {% if sent_requests %}
       <ul class="user-list">
         {% for req in sent_requests %}
-        <li class="user-card">
-          <img class="profile-img" src="{% if req.to_user.photo %}{{ req.to_user.photo.url }}{% else %}{% static 'default-profile.png' %}{% endif %}" alt="User Photo">
-          <div class="user-right">
-            <div class="user-info">{{ req.to_user.full_name|default:req.to_user.username }}</div>
-            <div class="user-action">
+        <li class="suggestion-card">
+          <div class="suggestion-header">
+            <img class="suggestion-avatar" src="{% if req.to_user.photo %}{{ req.to_user.photo.url }}{% else %}{% static 'default-profile.png' %}{% endif %}" alt="User Photo">
+            <div class="suggestion-text">
+
+              <div class="suggestion-fullname">{{ req.to_user.full_name }}</div>
+              <div class="suggestion-username">{{ req.to_user.username }}</div>
+            </div>
+            <div class="suggestion-action">
               <form method="post" action="{% url 'cancel_bestie_request' req.to_user.id %}">
                 {% csrf_token %}
                 <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                <button type="submit">Cancel Request</button>
+                <button type="submit">Cancel</button>
               </form>
             </div>
           </div>
@@ -332,11 +294,15 @@
     {% if received_requests %}
       <ul class="user-list">
         {% for req in received_requests %}
-        <li class="user-card">
-          <img class="profile-img" src="{% if req.from_user.photo %}{{ req.from_user.photo.url }}{% else %}{% static 'default-profile.png' %}{% endif %}" alt="User Photo">
-          <div class="user-right">
-            <div class="user-info">{{ req.from_user.full_name|default:req.from_user.username }}</div>
-            <div class="user-action">
+        <li class="suggestion-card">
+          <div class="suggestion-header">
+            <img class="suggestion-avatar" src="{% if req.from_user.photo %}{{ req.from_user.photo.url }}{% else %}{% static 'default-profile.png' %}{% endif %}" alt="User Photo">
+            <div class="suggestion-text">
+              <div class="suggestion-fullname">{{ req.from_user.full_name }}</div>
+              <div class="suggestion-username">@{{ req.from_user.username }}</div>
+
+            </div>
+            <div class="suggestion-action">
               <form method="post" action="{% url 'accept_bestie' req.from_user.id %}">
                 {% csrf_token %}
                 <input type="hidden" name="next" value="{{ request.get_full_path }}">

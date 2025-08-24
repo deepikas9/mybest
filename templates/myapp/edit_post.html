@@ -1,0 +1,41 @@
+<!-- edit_post.html -->
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Edit Post</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      background: #000;
+      color: white;
+      font-family: Arial;
+      padding: 20px;
+    }
+    textarea, input[type="file"] {
+      width: 100%;
+      background: #111;
+      color: white;
+      border: 1px solid #444;
+      border-radius: 6px;
+      padding: 10px;
+    }
+    button {
+      background: orangered;
+      color: white;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 8px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Edit Your Post</h2>
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Update</button>
+  </form>
+</body>
+</html>

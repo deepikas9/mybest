@@ -7,23 +7,140 @@
   <link rel="icon" type="image/png" href="{% static 'images/ume-logo.png' %}">
   <link rel="stylesheet" href="{% static 'css/profile.css' %}">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Body */
+body {
+  background: #000;
+  color: white;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+/* Horizontal Menu */
+.horizontal-menu {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: black;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 30px;
+  padding: 10px 0;
+  z-index: 999;
+}
+
+.horizontal-menu a {
+  text-align: center;
+  text-decoration: none;
+  color: white;
+  font-size: 12px;
+}
+
+.horizontal-menu a img {
+  height: 40px;
+  width: 40px;
+  object-fit: contain;
+}
+
+/* Menu Item */
+.menu-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.menu-item img {
+  width: 24px;
+  height: 24px;
+  margin-bottom: 4px;
+  transition: all 0.3s ease;
+}
+
+.menu-item span {
+  font-size: 11px;
+  color: white;
+  transition: color 0.3s ease;
+}
+
+.horizontal-menu a.active .menu-item span {
+  color: orangered;
+}
+
+/* Page Content */
+.page-content {
+  padding-top: 45px;  /* Push below top-bar + menu */
+  padding-bottom: 60px;  /* Space for footer */
+}
+
+/* Logout Form and Button */
+.logout-form {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.logout-button {
+  background-color: orangered;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 25px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.logout-button:hover {
+  background: #e14d00;
+}
+
+/* Footer */
+.footer-fixed {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background: orangered;
+  text-align: center;
+  font-size: 11px;
+  color: #aaa;
+  padding: 10px 0;
+  z-index: 1000;
+}
+
+/* Profile Form Styling */
+.profile-form {
+  border-radius: 0;
+  padding: 20px 15px;
+  box-shadow: none;
+}
+
+/* Page Title */
+.page-title {
+  font-size: 1.4rem;
+}
+
+/* Button Group */
+.button-group {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.button-group button {
+  width: 48%;
+}
+
+  </style>
 </head>
 <body>
-
-<!-- ✅ Top Bar (Logo + Search + Profile) -->
-<div class="top-bar">
-  <div class="top-left-logo">
-    <img src="{% static 'images/ume-logo-white.png' %}" alt="Logo">
-  </div>
-
-  <div class="top-search">
-    <input type="text" class="search-box" placeholder="Search...">
-  </div>
-
-  <div class="top-profile-icon">
-    <img src="{% static 'images/profile.png' %}" alt="pic">
-  </div>
-</div>
 
 
 <!-- ✅ Horizontal Menu -->
@@ -31,22 +148,45 @@
   <a href="{% url 'home' %}" id="nav-home"
      data-default="{% static 'images/homeicon_white.png' %}"
      data-active="{% static 'images/homeicon.png' %}">
-    <img src="{% static 'images/homeicon_white.png' %}" alt="Home">
+     <div class="menu-item">
+      <img src="{% static 'images/homeicon_white.png' %}" alt="Home">
+      <span>Convos</span>
+    </div>
   </a>
   <a href="{% url 'bestie_list' %}" id="nav-besties"
      data-default="{% static 'images/group_white.png' %}"
      data-active="{% static 'images/group.png' %}">
-    <img src="{% static 'images/group_white.png' %}" alt="Group">
+    <div class="menu-item">
+      <img src="{% static 'images/group_white.png' %}" alt="Besties">
+      <span>My Besties</span>
+    </div>
   </a>
   <a href="{% url 'search_bestie' %}" id="nav-add"
      data-default="{% static 'images/add-user_white.png' %}"
      data-active="{% static 'images/add-user.png' %}">
-    <img src="{% static 'images/add-user_white.png' %}" alt="Add User">
+    <div class="menu-item">
+      <img src="{% static 'images/add-user_white.png' %}" alt="Add">
+      <span>Add Bestie</span>
+    </div>
   </a>
+
+    <a href="{% url 'trendz' %}" id="nav-add"
+     data-default="{% static 'images/trend_white.jpg' %}"
+     data-active="{% static 'images/trend.jpg' %}">
+    <div class="menu-item">
+      <img src="{% static 'images/trend_white.jpg' %}" alt="Add">
+      <span>TrendZ</span>
+    </div>
+  </a>
+
+
   <a href="{% url 'settings' %}" id="nav-settings"
      data-default="{% static 'images/settings_white.png' %}"
      data-active="{% static 'images/settings.png' %}">
-    <img src="{% static 'images/settings_white.png' %}" alt="Settings">
+    <div class="menu-item">
+      <img src="{% static 'images/settings_white.png' %}" alt="Settings">
+      <span>Settings</span>
+    </div>
   </a>
 </div>
 
@@ -65,8 +205,6 @@
 <footer class="footer-fixed">
   <p>&copy; 2025 UME Limited. All rights reserved.</p>
 </footer>
-
-<!-- ✅ Menu Active State Script -->
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     const menuLinks = document.querySelectorAll(".horizontal-menu a");
@@ -78,8 +216,10 @@
 
       if (currentPath === href || currentPath.startsWith(href)) {
         img.src = link.getAttribute("data-active");
+        link.classList.add("active");  // 🔥 Add active class for styling text
       } else {
         img.src = link.getAttribute("data-default");
+        link.classList.remove("active");
       }
     });
   });

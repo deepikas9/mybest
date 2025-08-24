@@ -10,7 +10,7 @@
 
   html, body {
     margin: 0;
-    padding-top: 20px;
+    /*padding-top: 20px;*/
     background: black;
     color: #fff;
     font-family: 'Segoe UI', Roboto, sans-serif;
@@ -18,11 +18,14 @@
 
   .container {
     width: 100%;
+
     max-width: 600px;
-    margin: 25px auto;
+    /*margin: 25px auto;*/
     background: black;
     border-radius: 24px;
-    box-shadow: 0 8px 24px whitesmoke;
+    /* box-shadow: 0 8px 24px whitesmoke; */
+    margin: 0 auto;
+    padding-top: 70px;
   }
 
   .page-title {
@@ -30,31 +33,37 @@
     text-align: center;
     font-size: 1.6rem;
     margin-bottom: 20px;
-    text-shadow: 0 0 8px rgba(89, 62, 112, 0.8);
+     text-shadow: 0 0 8px rgba(89, 62, 112, 0.8);
   }
 
   .search-bar {
+      margin-top:20px;
     margin-bottom: 20px;
   }
 
   .search-bar input[type="search"] {
     width: 100%;
     padding: 12px 16px;
-    font-size: 1rem;
+    font-size: 0.8rem;
     border: none;
     border-radius: 24px;
-    background: #111;
+    background: #222;
     color: #eee;
     text-align: center;
     outline: none;
+
+  }
+
+  .search-bar input[type="search"]:hover {
+    background: #111;
+    border: 1px solid #593e70;
     box-shadow:
-      inset 0 0 8px rgba(89, 62, 112, 0.15),
-      0 4px 12px rgba(89, 62, 112, 0.4);
-    transition: background 0.3s ease, box-shadow 0.3s ease;
+      inset 0 0 12px rgba(89, 62, 112, 0.7),
+      0 6px 18px rgba(89, 62, 112, 0.7);
   }
 
   .search-bar input[type="search"]:focus {
-    background: #333;
+    background: #111;
     border: 1px solid #593e70;
     box-shadow:
       inset 0 0 12px rgba(89, 62, 112, 0.7),
@@ -65,19 +74,20 @@
     list-style: none;
     padding: 0;
     margin: 0;
+    background-color: black;
   }
 
   .conversation-item {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 14px 12px;
+    padding: 5px 10px;
     background: black;
-    margin-bottom: 12px;
-    border-radius: 50px;
+    margin-bottom: 2px;
+    /* border-radius: 50px; */
     cursor: pointer;
     transition: background 0.3s ease, box-shadow 0.3s ease;
-    box-shadow: 0 10px 10px rgba(89, 62, 112, 0.3);
+    /*box-shadow: 0px 0px 20px rgba(89, 62, 112, 0.3);*/
   }
 
   .conversation-item:hover,
@@ -88,13 +98,13 @@
   }
 
   .conversation-photo {
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid #333;
+    border: 0px solid #111;
     flex-shrink: 0;
-    box-shadow: 0 0 8px rgba(89, 62, 112, 0.6);
+
   }
 
   .conversation-details {
@@ -111,7 +121,10 @@
     text-overflow: ellipsis;
     text-shadow: 0 0 4px rgba(89, 62, 112, 0.8);
   }
-
+.message-text span {
+  font-size: 0.9rem;
+  font-weight: bold;
+}
   .conversation-meta {
     margin-top: 2px;
     display: flex;
@@ -140,6 +153,22 @@
     flex-shrink: 0;
     box-shadow: 0 0 8px rgba(89, 62, 112, 0.9);
   }
+  .tick-seen {
+    color: green;
+    font-size: 0.9em;
+    margin-right: 4px;
+  }
+
+  .tick-sent {
+    color: whitesmoke;
+    font-size: 0.9em;
+    margin-right: 4px;
+  }
+
+  .message-text {
+    display: inline-block;
+    max-width: 100%;
+  }
 
   .conversation-time {
     font-size: 0.75rem;
@@ -150,16 +179,17 @@
 
   @media (max-width: 600px) {
     .container {
-      padding: 20px 16px;
+      padding: 20px 2px;
+      width:100%;
       border-radius: 0;
       box-shadow: none;
       background: black;
     }
 
     .conversation-photo {
-      width: 60px;
-      height: 60px;
-      box-shadow: 0 0 10px rgba(89, 62, 112, 0.7);
+      width: 50px;
+      height: 50px;
+      /*box-shadow: 0 0 10px rgba(89, 62, 112, 0.7);*/
     }
 
     .conversation-name {
@@ -176,14 +206,21 @@
     }
   }
 </style>
-
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Besties Convos</title>
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
 <div class="container">
-  <h2 class="page-title">Besties Convos</h2>
+  <!--<h2 class="page-title">Besties Convos</h2>-->
 
-  <!-- 🔊 Notification Sound Audio -->
   <audio id="notification-sound" src="{% static 'audio/once.mp3' %}" preload="auto"></audio>
 
-  <form method="get" class="search-bar" role="search" aria-label="Search conversations">
+  <form method="get" class="search-bar" role="search">
     <input type="search" name="q" value="{{ query }}" placeholder="Search your Besties" autocomplete="off" />
   </form>
 
@@ -197,14 +234,25 @@
           <img class="conversation-photo" src="{{ convo.photo_url }}" alt="Photo of {{ convo.full_name|default:convo.username }}" />
 
           <div class="conversation-details">
-            <div class="conversation-name">
-              {{ convo.full_name|default:convo.username }}
-            </div>
+            <div class="conversation-name">{{ convo.full_name|default:convo.username }}</div>
             <div class="conversation-meta" id="meta-{{ convo.username }}">
-              <span class="message-text" id="last-message-{{ convo.username }}">{{ convo.last_message|default:"No messages yet" }}</span>
+              <span class="message-text" id="last-message-{{ convo.username }}">
+                {{ convo.last_message|default:"No messages yet" }}
+              </span>
+
               {% if convo.unread_count > 0 %}
                 <span class="unread-badge" id="unread-badge-{{ convo.username }}">{{ convo.unread_count }}</span>
               {% endif %}
+
+              {# Tick only if user sent the message #}
+              {% if convo.is_sent_by_user %}
+                {% if convo.is_seen %}
+                  <span class="tick-seen">✓✓</span>
+                {% else %}
+                  <span class="tick-sent">✓</span>
+                {% endif %}
+              {% endif %}
+
               {% if convo.last_message_time %}
                 <time class="conversation-time" datetime="{{ convo.last_message_time|date:'c' }}" id="last-message-time-{{ convo.username }}">
                   {{ convo.last_message_time|date:"d M, H:i" }}
@@ -228,7 +276,6 @@
         const counts = data.counts;
         const lastMessages = data.last_messages;
         const audio = document.getElementById("notification-sound");
-
         const convoList = document.querySelector(".conversation-list");
         const convoMap = {};
 
@@ -236,13 +283,29 @@
           const msgEl = document.getElementById(`last-message-${username}`);
           const timeEl = document.getElementById(`last-message-time-${username}`);
           const itemEl = document.querySelector(`[data-username="${username}"]`);
+          const metaDiv = document.getElementById(`meta-${username}`);
           const badgeId = `unread-badge-${username}`;
           let badgeEl = document.getElementById(badgeId);
-          const metaDiv = document.getElementById(`meta-${username}`);
+
+          if (!msgEl || !metaDiv || !itemEl) continue;
 
           // Update message text
-          if (msgEl && msgObj.message) {
-            msgEl.textContent = msgObj.message;
+          msgEl.textContent = msgObj.message;
+
+          // Remove existing ticks
+          if (timeEl) {
+            const prev = timeEl.previousElementSibling;
+            if (prev && (prev.classList.contains("tick-sent") || prev.classList.contains("tick-seen"))) {
+              prev.remove();
+            }
+          }
+
+          // Only show tick if the message was sent by the user
+          if (msgObj.is_sent_by_user && timeEl) {
+            const tickHTML = msgObj.is_seen
+              ? '<span class="tick-seen">✓✓</span>'
+              : '<span class="tick-sent">✓</span>';
+            timeEl.insertAdjacentHTML('beforebegin', tickHTML);
           }
 
           // Update timestamp
@@ -259,7 +322,7 @@
             timeEl.setAttribute('datetime', time.toISOString());
           }
 
-          // Update unread badge and play sound if new
+          // Handle unread badge
           const count = counts[username] || 0;
           if (count > 0) {
             if (!badgeEl) {
@@ -267,29 +330,17 @@
               span.className = 'unread-badge';
               span.id = badgeId;
               span.textContent = count;
-              if (metaDiv) {
-                const timeEl = document.getElementById(`last-message-time-${username}`);
-                if (timeEl) {
-                  metaDiv.insertBefore(span, timeEl);
-                } else {
-                  metaDiv.appendChild(span);
-                }
-              }
-
-              // New message, play sound
+              if (metaDiv && timeEl) metaDiv.insertBefore(span, timeEl);
               audio.play();
             } else {
-              const previous = parseInt(badgeEl.textContent || "0");
-              if (count > previous) {
-                audio.play();
-              }
+              if (parseInt(badgeEl.textContent) < count) audio.play();
               badgeEl.textContent = count;
             }
           } else if (badgeEl) {
             badgeEl.remove();
           }
 
-          // Store for sorting
+          // For sorting
           if (itemEl) {
             convoMap[username] = {
               el: itemEl,
@@ -298,34 +349,32 @@
           }
         }
 
-        // Sort and reorder conversation list
+        // Sort list by timestamp
         const sortedItems = Object.values(convoMap).sort((a, b) => b.timestamp - a.timestamp);
         sortedItems.forEach(item => convoList.appendChild(item.el));
       })
-      .catch(err => {
-        console.error('Error fetching conversation updates:', err);
-      });
+      .catch(err => console.error('Error fetching updates:', err));
   }
 
+  // Poll every 3 seconds
   setInterval(fetchConversationUpdates, 3000);
   fetchConversationUpdates();
 
+  // Search filter
   const searchInput = document.querySelector('input[name="q"]');
   const conversationItems = document.querySelectorAll('.conversation-item');
 
   searchInput.addEventListener('input', function () {
     const query = this.value.trim().toLowerCase();
-
     conversationItems.forEach(item => {
       const name = item.querySelector('.conversation-name')?.textContent.toLowerCase() || '';
       const message = item.querySelector('.message-text')?.textContent.toLowerCase() || '';
-
-      if (name.includes(query) || message.includes(query)) {
-        item.style.display = '';
-      } else {
-        item.style.display = 'none';
-      }
+      item.style.display = name.includes(query) || message.includes(query) ? '' : 'none';
     });
   });
 </script>
+</body>
+</html>
+
+
 {% endblock %}

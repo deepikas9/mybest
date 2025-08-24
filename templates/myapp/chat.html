@@ -6,6 +6,14 @@
   <title>Chat</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <link rel="icon" href="{% static 'images/me-snip.jpg' %}" />
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Chat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <link rel="icon" href="{% static 'images/me-snip.jpg' %}" />
   <style>
     html, body {
       margin: 0;
@@ -16,15 +24,7 @@
       overflow: auto;
       padding-bottom: env(safe-area-inset-bottom);
     }
-    .ticks {
-      font-size: 0.7rem;
-      color: whitesmoke;
-      float: right;
-      margin-left: 5px;
-    }
-    .read .ticks {
-      color: whitesmoke;
-    }
+
     .chat-container {
       display: flex;
       flex-direction: column;
@@ -33,9 +33,11 @@
       margin: 0 auto;
       box-sizing: border-box;
     }
+
+    /* 🌟 WhatsApp-style header */
     .chat-header {
-      background-color: #1f1f1f;
-      padding: 14px 60px;
+      background-color: #161618;
+      padding: 10px 16px;
       font-size: 1.1rem;
       font-weight: bold;
       color: orangered;
@@ -47,36 +49,63 @@
       border-bottom: 1px solid #2e2e2e;
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: space-between;
       box-sizing: border-box;
     }
-    .chat-header a {
-      position: absolute;
-      left: 15px;
-      top: 50%;
-      transform: translateY(-50%);
+
+    .header-left {
       display: flex;
       align-items: center;
+      gap: 20px;
     }
-    .chat-header a img {
-      height: 25px;
-      width: auto;
+
+    .header-profile-pic {
+      height: 40px;
+      width: 40px;
+      border-radius: 50%;
+      object-fit: cover;
     }
-    .chat-header .username {
-      text-align: center;
+
+    .username-status {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      line-height: 1.2;
     }
-    .chat-header .username div {
-      display: block;
+
+    .username-status .name {
+      color: orangered;
+      font-weight: bold;
     }
-    .chat-header .status {
-      font-size: 0.7rem;
+
+    .username-status .status {
+      font-size: 0.75rem;
       color: #ccc;
     }
+
+    .header-icons {
+      display: flex;
+      align-items: center;
+      gap: 30px;
+    }
+    .header-icons img,
+.header-icons button img {
+  height: 30px;
+  width: 30px;
+  object-fit: contain;
+}
+
+.header-icons button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
 
     .chat-messages {
       flex: 1;
       padding: 10px;
-      padding-top: 60px;
+      padding-top: 65px;
       padding-bottom: 120px;
       overflow-y: auto;
       display: flex;
@@ -112,7 +141,7 @@
 
     .timestamp {
       font-size: 0.6rem;
-      color: #10264a;
+      color: #000000;
       margin-top: 4px;
       text-align: right;
     }
@@ -122,7 +151,7 @@
       bottom: 0;
       width: 100%;
       max-width: 600px;
-      background: #111;
+      background: black;
       padding: 8px 10px;
       z-index: 1001;
       box-sizing:border-box;
@@ -131,6 +160,12 @@
     .chat-input-wrapper {
       position: relative;
       width: 100%;
+    }
+    .ticks {
+      font-size: 0.7rem;
+      color: whitesmoke;
+      float: right;
+      margin-left: 5px;
     }
 
     .chat-input textarea {
@@ -151,47 +186,100 @@
       overflow-y: auto;
     }
 
-    /*.chat-input button {*/
-    /*  position: absolute;*/
-    /*  right: 10px;*/
-    /*  top: 50%;*/
-    /*  transform: translateY(-50%);*/
-    /*  background: orangered;*/
-    /*  border: none;*/
-    /*  color: white;*/
-    /*  font-weight: bold;*/
-    /*  padding: 8px 14px;*/
-    /*  border-radius: 20px;*/
-    /*  cursor: pointer;*/
-    /*}*/
-.chat-input button {
-  position: absolute;
-  right: 5px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: linear-gradient(to right, orangered, #ff4e00);
-  border: none;
-  color: white;
-  font-weight: bold;
-  padding: 8px 16px;
-  border-radius: 20px;
-  cursor: pointer;
-  font-size: 1rem;
-  box-shadow: 0 4px 10px rgba(255, 69, 0, 0.3);
-  transition: all 0.25s ease;
+    .chat-input button {
+      position: absolute;
+      right: 5px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: linear-gradient(to right, orangered, #ff4e00);
+      border: none;
+      color: white;
+      font-weight: bold;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 1rem;
+      box-shadow: 0 4px 10px rgba(255, 69, 0, 0.3);
+      transition: all 0.25s ease;
+    }
+
+    .chat-input button:hover {
+      background: linear-gradient(to right, #ff7043, #ff5722);
+      transform: translateY(-50%) scale(1.05);
+      box-shadow: 0 6px 14px rgba(255, 87, 34, 0.5);
+    }
+    .dropdown {
+  position: relative;
 }
 
-.chat-input button:hover {
-  background: linear-gradient(to right, #ff7043, #ff5722);
-  transform: translateY(-50%) scale(1.05);
-  box-shadow: 0 6px 14px rgba(255, 87, 34, 0.5);
+.dropdown-content {
+  display: none;
+  position: absolute;
+  right: 0;
+  background-color: #222;
+  border: 1px solid #444;
+  z-index: 100;
+  min-width: 140px;
+  border-radius: 6px;
+}
+
+.dropdown-content a {
+  color: white;
+  padding: 10px;
+  display: block;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.dropdown-content a:hover {
+  background-color: #333;
+}
+
+/* Modal styling */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1002;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.8);
+}
+
+.modal-content {
+  background-color: #121212;
+  margin: 10% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  max-width: 400px;
+  color: white;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.wallpaper-options {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.wallpaper-options img {
+  width: 100px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 8px;
+  cursor: pointer;
 }
 
 
     @media (max-width: 600px) {
       .chat-header {
-        font-size: 1rem;
-        padding: 12px 50px;
+        font-size: 0.8rem;
+        padding: 10px;
       }
 
       .chat-input button {
@@ -202,62 +290,88 @@
       .chat-input textarea {
         font-size: 0.95rem;
       }
+
+      .header-profile-pic {
+        height: 50px;
+        width: 50px;
+      }
+
+      .header-icons img {
+        height: 30px;
+        width:30px;
+      }
     }
   </style>
 </head>
 <body>
-<div class="chat-container">
-  <div class="chat-header">
-    <a href="{% url 'home' %}"><img src="{% static 'images/homeicon_white.png' %}" alt="Home" /></a>
-    <div class="username">
-      <div>{{ bestie.full_name|default:bestie.username }}</div>
-      <div class="status" id="user-status">
-        {% if is_online %}
-          <span style="color:whitesmoke;">online</span><br>
-          <!-- <span style="font-size:0.65rem;">{{ last_seen_display }}</span> -->
-        {% else %}
-          <span style="font-size:0.75rem;">{{ last_seen_display }}</span>
-        {% endif %}
-      </div>
-      <div style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%);">
-  <button onclick="deleteChat()" title="Delete All Chat" style="
-    background: none;
-    border: none;
-    color: #ff4e00;
-    font-size: 0.9rem;
-    cursor: pointer;
-    font-weight: bold;
-  ">🗑</button>
-</div>
-
-    </div>
-  </div>
-
-  <div class="chat-messages" id="chat-box">
-    {% for msg in messages %}
-      <div class="message {% if msg.sender == user %}sent{% else %}received{% endif %}{% if msg.read %} read{% endif %}">
-        {{ msg.message|linebreaksbr }}
-        <div class="timestamp">
-          {% if msg.sender == user %}
-            <span class="ticks">{% if msg.read %}✓✓{% else %}✓{% endif %}</span>
-          {% endif %}
+  <div class="chat-container">
+    <!-- 🌟 WhatsApp-Style Header -->
+    <div class="chat-header">
+      <div class="header-left">
+        <a href="{% url 'home' %}">
+          <img src="{% static 'images/BACK.png' %}" alt="Back" height="25px">
+        </a>
+        <img src="{% if bestie.photo %}{{ bestie.photo.url }}{% else %}{% static 'images/default-profile.jpg' %}{% endif %}" alt="Profile Pic" class="header-profile-pic" />
+        <div class="username-status">
+          <div class="name">{{ bestie.full_name|default:bestie.username }}</div>
+          <div class="status" id="user-status">
+            {% if is_online %}
+              <span style="color:whitesmoke;">online</span>
+            {% else %}
+              <span>{{ last_seen_display }}</span>
+            {% endif %}
+          </div>
         </div>
       </div>
-    {% empty %}
-      <p style="text-align:center; color:#aaa;">No messages yet.</p>
-    {% endfor %}
-  </div>
+<div class="header-icons">
+  <img src="{% static 'images/call_orangered.png' %}" alt="Call" title="Call" />
 
-  <form method="post" class="chat-input">
-    {% csrf_token %}
-    <div class="chat-input-wrapper">
-      <textarea name="message" rows="1" required placeholder="Type a message..."></textarea>
-      <button type="submit">Send</button>
+  <!-- 3-dots menu icon -->
+  <div class="dropdown">
+    <img src="{% static 'images/menu.png' %}" alt="Menu" onclick="toggleMenu()" style="cursor:pointer;">
+    <div id="dropdown-menu" class="dropdown-content">
+      <a href="#" onclick="deleteChat()">Delete Chat</a>
+      <a href="#" onclick="openWallpaperSelector()">Select Wallpaper</a>
     </div>
-  </form>
+  </div>
 </div>
 
-<audio id="notify-sound" src="{% static 'audio/online.mp3' %}" preload="auto"></audio>
+    </div>
+    <video id="chat-bg-video" autoplay muted loop playsinline style="
+  position: fixed;
+  top: 65px;
+  left: 0;
+  width: 100%;
+  height: calc(100% - 120px); /* account for input + header */
+  object-fit: cover;
+  z-index: -1;
+  opacity: 0.3;
+  pointer-events: none;
+  display: none;">
+  <source id="video-src" src="{% static 'videos/default.mp4' %}" type="video/mp4">
+</video>
+
+
+    <!-- 📨 Message box — JS will populate messages -->
+    <div class="chat-messages" id="chat-box">
+      <p id="no-messages" style="text-align:center; color:#aaa;">No messages yet.</p>
+    </div>
+
+    <!-- 📝 Input form -->
+    <form method="post" class="chat-input">
+      {% csrf_token %}
+      <div class="chat-input-wrapper">
+        <textarea name="message" rows="1" required placeholder="Type a message..."></textarea>
+        <button type="submit">Send</button>
+      </div>
+    </form>
+  </div>
+
+  <audio id="notify-sound" src="{% static 'audio/online.mp3' %}" preload="auto"></audio>
+</body>
+</html>
+
+  <!-- 🎯 JS logic for fetching messages -->
 <script>
   const chatBox = document.getElementById('chat-box');
   const textarea = document.querySelector('textarea[name="message"]');
@@ -269,6 +383,24 @@
   let lastMessageTimestamp = null;
   let lastTypingSent = false;
   let typingTimer = null;
+
+  // ✅ Handle session expiration
+  function fetchWithSessionCheck(url, options = {}) {
+    return fetch(url, {
+      ...options,
+      headers: {
+        ...options.headers,
+        "X-Requested-With": "XMLHttpRequest"
+      }
+    }).then(response => {
+      if (response.status === 401) {
+        alert("Your session has expired. Please log in again.");
+        window.location.href = "/login/";
+        throw new Error("Session expired");
+      }
+      return response;
+    });
+  }
 
   function scrollToBottom() {
     chatBox.scrollTop = chatBox.scrollHeight;
@@ -288,9 +420,10 @@
   }
 
   function appendMessage(msg) {
+    document.getElementById('no-messages')?.remove();
+
     const div = document.createElement("div");
-    div.classList.add("message");
-    div.classList.add(msg.sender === currentUsername ? "sent" : "received");
+    div.classList.add("message", msg.sender === currentUsername ? "sent" : "received");
     if (msg.read) div.classList.add("read");
 
     let ticks = '';
@@ -306,11 +439,10 @@
   }
 
   function fetchMessages() {
-    fetch(`/chat/get_messages/${receiverId}/`)
+    fetchWithSessionCheck(`/chat/get_messages/${receiverId}/`)
       .then(response => response.json())
       .then(data => {
         const newMessages = data.messages || [];
-
         const filtered = lastMessageTimestamp
           ? newMessages.filter(msg => new Date(msg.timestamp) > new Date(lastMessageTimestamp))
           : newMessages;
@@ -320,7 +452,6 @@
           if (newFromBestie.length > 0) messageSound.play();
 
           filtered.forEach(msg => appendMessage(msg));
-
           lastMessageTimestamp = newMessages[newMessages.length - 1].timestamp;
           scrollToBottom();
         }
@@ -331,7 +462,7 @@
     e.preventDefault();
     const message = textarea.value.trim();
     if (message !== "") {
-      fetch(`/chat/send_message/${receiverId}/`, {
+      fetchWithSessionCheck(`/chat/send_message/${receiverId}/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -354,9 +485,7 @@
     typingTimer = setTimeout(() => sendTypingStatus(false), 3000);
   });
 
-  textarea.addEventListener("focus", () => {
-    setTimeout(scrollToBottom, 300);
-  });
+  textarea.addEventListener("focus", () => setTimeout(scrollToBottom, 300));
 
   textarea.addEventListener("keydown", function(event) {
     if (event.key === "Enter" && !event.shiftKey) {
@@ -367,8 +496,7 @@
 
   function sendTypingStatus(isTyping) {
     if (lastTypingSent === isTyping) return;
-
-    fetch(`/chat/typing-status/${receiverId}/`, {
+    fetchWithSessionCheck(`/chat/typing-status/${receiverId}/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -376,23 +504,22 @@
       },
       body: JSON.stringify({ typing: isTyping })
     });
-
     lastTypingSent = isTyping;
   }
 
   function updateStatus() {
-    fetch(`/chat/chat_status/{{ bestie.id }}/`)
+    fetchWithSessionCheck(`/chat/chat_status/{{ bestie.id }}/`)
       .then(res => res.json())
       .then(data => {
         const statusEl = document.getElementById("user-status");
 
         if (data.typing) {
-          statusEl.innerHTML = `<span style="color:whitesmoke;">typing...</span>`;
+          statusEl.innerHTML = '<span style="color:whitesmoke;">typing...</span>';
           return;
         }
 
         if (data.is_online) {
-          statusEl.innerHTML = `<span style="color:whitesmoke;">online</span>`;
+          statusEl.innerHTML = '<span style="color:whitesmoke;">online</span>';
           return;
         }
 
@@ -410,7 +537,6 @@
             const hour12 = hours % 12 === 0 ? 12 : hours % 12;
             return `${hour12}:${mins}${ampm}`;
           };
-
           const isSameDay = (d1, d2) =>
             d1.getFullYear() === d2.getFullYear() &&
             d1.getMonth() === d2.getMonth() &&
@@ -427,27 +553,27 @@
           } else if (isSameDay(now, seen)) {
             statusEl.innerHTML = `<span style="font-size:0.75rem; color:#aaa;">last seen today at ${formatTime(seen)}</span>`;
           } else if (isYesterday(now, seen)) {
-            statusEl.innerHTML = `<span style="font-size:0.75rem; color:#aaa;">last seen yesterday at ${formatTime(seen)}</span>`;
+            statusEl.innerHTML = `<span style="font-size:0.7rem; color:#aaa;">last seen yesterday at ${formatTime(seen)}</span>`;
           } else {
             const dateStr = `${pad(seen.getDate())}/${pad(seen.getMonth() + 1)}/${String(seen.getFullYear()).slice(2)}`;
-            statusEl.innerHTML = `<span style="font-size:0.75rem; color:#aaa;">last seen on ${dateStr} ${formatTime(seen)}</span>`;
+            statusEl.innerHTML = `<span style="font-size:0.65rem; color:#aaa;">last seen ${dateStr}, ${formatTime(seen)}</span>`;
           }
         } else {
-          statusEl.innerHTML = `<span style="color:#aaa; font-size:0.75rem;">offline</span>`;
+          statusEl.innerHTML = '<span style="color:#aaa; font-size:0.75rem;">offline</span>';
         }
       });
   }
 
   function deleteChat() {
     if (confirm("Are you sure you want to delete the entire chat?")) {
-      fetch(`/chat/delete_chat/${receiverId}/`, {
+      fetchWithSessionCheck(`/chat/delete_chat/${receiverId}/`, {
         method: "POST",
         headers: {
           "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
         }
       }).then(response => {
         if (response.ok) {
-          chatBox.innerHTML = '<p style="text-align:center; color:#aaa;">No messages yet.</p>';
+          chatBox.innerHTML = '<p id="no-messages" style="text-align:center; color:#aaa;">No messages yet.</p>';
           lastMessageTimestamp = null;
         } else {
           alert("Failed to delete chat.");
@@ -456,10 +582,74 @@
     }
   }
 
-  setInterval(fetchMessages, 1000);  // Adjusted for better performance
+  setInterval(fetchMessages, 1000);  // Adjust as needed
   setInterval(updateStatus, 3000);
   fetchMessages();
   updateStatus();
+</script>
+
+<div id="wallpaper-modal" class="modal">
+  <div class="modal-content">
+    <h3>Select Wallpaper</h3>
+    <div class="wallpaper-options">
+      <img src="{% static 'images/Lovers.jpg' %}" onclick="setWallpaper(this.src)" />
+      <img src="{% static 'images/lovebg1.jpg' %}" onclick="setWallpaper(this.src)" />
+      <img src="{% static 'images/Default.jpg' %}" onclick="setWallpaper(this.src)" />
+      <img src="{% static 'videos/Waterflow.mp4' %}" onclick="setWallpaper('{% static 'videos/Waterflow.mp4' %}')">
+
+      <!-- Add more as needed -->
+    </div>
+    <button onclick="closeWallpaperSelector()">Cancel</button>
+  </div>
+</div>
+<script>
+  function toggleMenu() {
+    const menu = document.getElementById("dropdown-menu");
+    menu.style.display = menu.style.display === "block" ? "none" : "block";
+  }
+
+  window.onclick = function(event) {
+    if (!event.target.matches('.dropdown img')) {
+      const dropdowns = document.getElementsByClassName("dropdown-content");
+      for (let i = 0; i < dropdowns.length; i++) {
+        dropdowns[i].style.display = "none";
+      }
+    }
+  };
+
+  function openWallpaperSelector() {
+    document.getElementById("wallpaper-modal").style.display = "block";
+  }
+
+  function closeWallpaperSelector() {
+    document.getElementById("wallpaper-modal").style.display = "none";
+  }
+
+  function setWallpaper(src) {
+    document.getElementById("chat-box").style.backgroundImage = `url('${src}')`;
+    document.getElementById("chat-box").style.backgroundSize = "cover";
+    document.getElementById("chat-box").style.backgroundPosition = "center";
+    closeWallpaperSelector();
+  }
+
+function setWallpaper(src) {
+  const ext = src.split('.').pop().toLowerCase();
+  const video = document.getElementById("chat-bg-video");
+
+  if (ext === 'mp4') {
+    document.getElementById("video-src").src = src;
+    video.load();
+    video.style.display = "block";
+    document.getElementById("chat-box").style.backgroundImage = "";
+  } else {
+    video.style.display = "none";
+    document.getElementById("chat-box").style.backgroundImage = `url('${src}')`;
+    document.getElementById("chat-box").style.backgroundSize = "cover";
+    document.getElementById("chat-box").style.backgroundPosition = "center";
+  }
+
+  closeWallpaperSelector();
+}
 </script>
 
 </body>

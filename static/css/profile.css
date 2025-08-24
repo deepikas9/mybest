@@ -4,13 +4,14 @@
   padding: 0;
   box-sizing: border-box;
 }
-
-/* Top Bar */
+/*
+Top Bar
 .top-bar {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
+
+  max-width: 600px;
   height: 80px;
 
   display: flex;
@@ -20,9 +21,9 @@
   padding: 0 10px;
   z-index: 1000;
   flex-wrap: nowrap;
-}
+} */
 
-.top-left-logo img {
+/* .top-left-logo img {
   height: 100px;
   max-width: 100%;
 }
@@ -30,41 +31,17 @@
 .top-search {
   flex-grow: 1;
   margin: 0 12px;
-}
+} */
 
-.search-box {
-  width: 100%;
-  height: 40px;
-  border-radius: 150px;
-  border: 0.5px solid whitesmoke;
-  padding: 0 15px;
-  font-size: 16px;
-  background: #111;
-  color: white;
-}
 
-/* Circular Profile Icon */
-.top-profile-icon img {
-  width: 100px;
-  height: 100px;
-  aspect-ratio: 1 / 1;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 0.5px solid whitesmoke;
-  box-shadow: 0 0 6px rgba(255, 69, 0, 0.5);
-  transition: transform 0.2s ease-in-out;
-}
-
-.top-profile-icon img:hover {
-  transform: scale(1.05);
-}
 
 /* Horizontal Menu */
 .horizontal-menu {
   position: fixed;
-  top: 80px;
+  top: 0px;
+  padding: 0px;
   width: 100%;
-  background: black;
+  background: #1c1c1c;
   display: flex;
   justify-content: center;
   gap: 60px;
@@ -80,8 +57,8 @@
 
 /* Page Content */
 .page-content {
-  padding-top: 160px; /* Push below top-bar + menu */
-  padding-bottom: 60px; /* Space for footer */
+  padding-top: 70px;  /* Push below top-bar + menu  */
+  padding-bottom: 60px;  Space for footer */
 }
 
 /* Logout */
@@ -120,17 +97,20 @@
 body {
   background: #000;
   color: white;
+  margin: 0;
+  padding: 0;
   font-family: Arial, sans-serif;
 }
 
 /* Responsive */
-@media (max-width: 600px) {
+/* @media (max-width: 600px) {
   .top-bar {
     padding: 10px;
   }
 
   .top-left-logo img {
-    height: 50px;
+    height: 100px;
+    width:100px;
   }
 
   .search-box {
@@ -139,9 +119,9 @@ body {
   }
 
   .top-profile-icon img {
-    width: 50px;
-    height: 50px;
-  }
+    width: 40px;
+    height: 40px;
+  } */
 
   .horizontal-menu {
     gap: 30px;
@@ -167,4 +147,4 @@ body {
   .button-group button {
     width: 48%;
   }
-}
+

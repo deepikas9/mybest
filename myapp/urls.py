@@ -1,9 +1,9 @@
 from django.urls import path
 from .views import (
     login_view, register_view, forgot_password_view, home_view,
-    add_bestie_view, edit_profile, chat_view, logout_view,
-    search_bestie, add_bestie, bestie_list, remove_bestie,chat_status,typing_status_view, delete_chat,
-    bestie_inbox, accept_bestie, cancel_bestie_request,get_messages, send_message,unread_counts_view
+    add_bestie_view, edit_profile, chat_view, logout_view,get_reaction_counts, toggle_reaction,get_reactions,
+    search_bestie, add_bestie, bestie_list, remove_bestie,chat_status,typing_status_view, delete_chat, react_to_post,emoji_reaction,
+    bestie_inbox, accept_bestie, cancel_bestie_request,get_messages, send_message,unread_counts_view, trendz, edit_post, delete_post
 )
 
 urlpatterns = [
@@ -13,7 +13,11 @@ urlpatterns = [
     path('forgot-password/', forgot_password_view, name='forgot_password'),
     path('home/', home_view, name='home'),
     path('settings/', edit_profile, name='settings'),
-
+    path('trendz/', trendz, name='trendz'),
+    path('trendz/edit/<int:post_id>/', edit_post, name='edit_post'),
+    path('trendz/delete/<int:post_id>/', delete_post, name='delete_post'),
+    #path('react/', react_to_post, name='react_to_post'),
+    path("emoji_reaction/", emoji_reaction, name="emoji_reaction"),
     # Bestie logic
     path('add_bestie/', add_bestie_view, name='add_bestie_view'),
     path('add-bestie/<int:user_id>/', add_bestie, name='add_bestie'),
@@ -22,6 +26,13 @@ urlpatterns = [
     path('accept-bestie/<int:user_id>/', accept_bestie, name='accept_bestie'),
     path('remove-bestie/<int:user_id>/', remove_bestie, name='remove_bestie'),
     path('cancel-bestie/<int:user_id>/', cancel_bestie_request, name='cancel_bestie_request'),
+    # urls.py
+    path('reactions/<int:post_id>/', get_reaction_counts, name='get_reaction_counts'),
+    path("react/<int:post_id>/", toggle_reaction, name="toggle_reaction"),
+    path("get-reactions/", get_reactions, name="get_reactions"),
+    
+
+
 
     # Chat
     #path('chat/<str:username>/', chat_view, name='chat'),

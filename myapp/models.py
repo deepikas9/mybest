@@ -63,3 +63,77 @@ class ChatMessage(models.Model):
         return f"{self.sender} -> {self.receiver}: {self.message[:20]}"
     
 
+
+# 🌟 TRENDING FEATURE MODELS
+
+class Post(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    content = models.TextField(blank=True, null=True)
+    photo = models.ImageField(upload_to='post_photos/', blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    like_count = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.user.username}'s post at {self.created_at.strftime('%Y-%m-%d %H:%M')}"
+
+    def total_likes(self):
+        return self.likes.count()
+
+
+class Like(models.Model):
+    post = models.ForeignKey(Post, related_name='likes', on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('post', 'user')  # Prevent duplicate likes
+
+    
+    def save(self, *args, **kwargs):
+        # Before saving a new like, update the post's like count
+        if not self.pk:  # If the like is new (not being updated)
+            self.post.like_count += 1
+            self.post.save()
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        # Decrease the like count when a like is removed
+        self.post.like_count -= 1
+        self.post.save()
+        super().delete(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.user.username} liked post {self.post.id}"
+    
+
+class Comment(models.Model):
+    post = models.ForeignKey(Post, related_name='comments', on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} commented on Post {self.post.id}"
+    
+
+# models.py
+
+from django.db import models
+from django.conf import settings
+
+class EmojiReaction(models.Model):
+    post = models.ForeignKey('Post', on_delete=models.CASCADE, related_name='reactions')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    emoji = models.CharField(max_length=10)  # e.g., 😍, 😳
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('post', 'user', 'emoji')  # prevents duplicate reactions by same user
+
+
+
+    
+
