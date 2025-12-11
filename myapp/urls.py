@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import (
-    login_view, register_view, forgot_password_view, home_view,
+    login_view, register_view, forgot_password_view, home_view,emoji_users,
     add_bestie_view, edit_profile, chat_view, logout_view,get_reaction_counts, toggle_reaction,get_reactions,
     search_bestie, add_bestie, bestie_list, remove_bestie,chat_status,typing_status_view, delete_chat, react_to_post,emoji_reaction,
     bestie_inbox, accept_bestie, cancel_bestie_request,get_messages, send_message,unread_counts_view, trendz, edit_post, delete_post
@@ -30,7 +30,9 @@ urlpatterns = [
     path('reactions/<int:post_id>/', get_reaction_counts, name='get_reaction_counts'),
     path("react/<int:post_id>/", toggle_reaction, name="toggle_reaction"),
     path("get-reactions/", get_reactions, name="get_reactions"),
-    
+    path('emoji-users/', emoji_users, name='emoji_users'),
+
+
 
 
 

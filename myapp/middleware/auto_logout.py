@@ -17,7 +17,7 @@ class AutoLogoutMiddleware:
                 elapsed = (now - datetime.datetime.fromisoformat(last_activity)).total_seconds()
                 if elapsed > settings.AUTO_LOGOUT_DELAY:
                     logout(request)
-                    messages.info(request, 'Session Expired')
+                    messages.info(request, 'You have been logged out due to inactivity.')
                     return redirect('login')  # Ensure this URL name exists
 
                     # Optional: add a message here or redirect

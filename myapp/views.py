@@ -1509,12 +1509,12 @@ def react_to_post(request):
         return JsonResponse({'error': 'Invalid data'}, status=400)
 
     post = get_object_or_404(Post, id=post_id)
-    
+
     # Toggle: If already reacted, remove it
     reaction, created = EmojiReaction.objects.get_or_create(
         post=post, user=request.user, emoji=emoji
     )
-    
+
     if not created:
         reaction.delete()
         action = 'removed'
@@ -1617,7 +1617,7 @@ def trendz(request):
 
     return render(request, 'myapp/trendz.html', {
         'form': form,
-        
+
         'top_posts': top_posts,
         'emoji_counts': emoji_counts,
     })
@@ -1656,10 +1656,10 @@ def trendz(request):
             post.user = request.user
             post.save()
             return redirect("trendz")
-        
+
     # ✅ Get only besties (accepted bestie requests)
     besties = request.user.besties()  # assuming you already have besties() method on CustomUser
-    
+
 
     top_posts = (
         #Post.objects
@@ -1723,7 +1723,7 @@ def emoji_reaction(request):
     allowed_emojis = ("😍", "😇", "😭", "😡")
     if emoji not in allowed_emojis:
         return JsonResponse({"error": "Invalid emoji"}, status=400)
-    
+
     EmojiReaction.objects.filter(post=post, user=request.user).exclude(emoji=emoji).delete()
 
 
@@ -1812,4 +1812,34 @@ def toggle_reaction(request, post_id):
     )
     counts_map = {c["emoji"]: c["count"] for c in counts}
     return JsonResponse({"counts": counts_map})
+
+
+
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from .models import Post, EmojiReaction
+
+@login_required
+def emoji_users(request):
+    if request.method == "POST":
+        import json
+        data = json.loads(request.body)
+        post_id = data.get("post_id")
+        emoji = data.get("emoji")
+
+        try:
+            post = Post.objects.get(id=post_id)
+            reactions = EmojiReaction.objects.filter(post=post, emoji=emoji)
+            users = [{
+                "full_name": r.user.full_name,
+                "username": r.user.username,
+                "photo": r.user.photo.url if r.user.photo else None
+            } for r in reactions]
+
+            return JsonResponse({"success": True, "users": users})
+        except Post.DoesNotExist:
+            return JsonResponse({"success": False})
+    return JsonResponse({"success": False})
+
+
 
